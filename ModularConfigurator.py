@@ -14,13 +14,13 @@ class ModularConfigurator:
 
     @staticmethod
     def isAtTopLevel():
-        isAtTopLevel = False
 
-        try:
-            box = pyautogui.locateOnScreen('screenshotsForDetection/blocks-breadcrumb.png')
-        except:
-            # If you fail to see the breadcrumb you are at the top level
+        box = pyautogui.locateOnScreen('screenshotsForDetection/blocks-breadcrumb.png')
+
+        if box == None:
             isAtTopLevel = True
+        else:
+            isAtTopLevel = False
 
         return isAtTopLevel
 
