@@ -97,22 +97,27 @@ class ModularConfigurator:
 
     # Iterate through all the garment folders
     @staticmethod
-    def tryOnAllMensBlocks():
+    def iterateThroughBlockFolders():
         # Omit folded shirts
-        blockFoldersToInclude = [1]
+        blockFoldersToInclude = [1,2]
         # Loop over Blocks (Folded shirts, Men, women)
         for i in blockFoldersToInclude:
+            ModularConfigurator.log("Moving to a folder...")
             pyautogui.moveTo(
                 ModularConfigurator.blockFolderStartingPoint[0] + ModularConfigurator.distanceBetweenBlocks * i,
                 ModularConfigurator.blockFolderStartingPoint[1]
             )
             ## Double click on Folder
+            ModularConfigurator.log("Open the folder...")
             pyautogui.doubleClick()
+            time.sleep(3)
             ## Double click on Garment Type folder (Jackets Polos, Shirts)
             pyautogui.doubleClick()
+            time.sleep(3)
 
             garmentTypeFoldersToInclude = [1]
             for j in garmentTypeFoldersToInclude:
+                ModularConfigurator.log("Moving to something...")
                 pyautogui.moveTo(
                     ModularConfigurator.blockFolderStartingPoint[0] + ModularConfigurator.distanceBetweenBlocks * j,
                     ModularConfigurator.blockFolderStartingPoint[1]
@@ -125,6 +130,7 @@ class ModularConfigurator:
 
                 # Double, Single Jacket subtype
                 for k in garmentTypeFoldersToInclude:
+                    ModularConfigurator.log("Move to a garment subtype...")
                     pyautogui.moveTo(
                         garmentSubTypeStartingPoint[0] + ModularConfigurator.distanceBetweenBlocks * k,
                         garmentSubTypeStartingPoint[1]
@@ -133,10 +139,12 @@ class ModularConfigurator:
 
                     # Start to go back up -- out of subtype
                     ## Double Click on the .. folder
+                    time.sleep(3)
                     pyautogui.moveTo(ModularConfigurator.blockFolderStartingPoint)
                     pyautogui.doubleClick()
 
                 # Start to go back up -- out of garment type
                 ## Double Click on the .. folder
+                time.sleep(3)
                 pyautogui.moveTo(ModularConfigurator.blockFolderStartingPoint)
                 pyautogui.doubleClick()
