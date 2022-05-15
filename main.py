@@ -15,12 +15,7 @@ def exportToPNG():
     pyautogui.write('garment')
     clickOSSave()
 
-def clickOSSave():
-    # TODO Detect where the OS Save is
-    pyautogui.moveTo(1068, 529)
-    # Add a delay
-    # Click the Save button
-    pyautogui.click()
+
 
 # Press the green button in the gutter to run the script.
 # TODO use grayscale matching and regions to make locateOnScreen() fast!
@@ -29,9 +24,19 @@ def clickOSSave():
 if __name__ == '__main__':
     # Focus Clo window
     pyautogui.click(x=17, y=81)
-    ModularConfigurator.open()
-    ModularConfigurator.tryOnAllMensBlocks()
+    # ModularConfigurator.open()
+    # ModularConfigurator.tryOnAllMensBlocks()
+    # ModularConfigurator.iterateThroughGarmentBlocks()
+    ModularConfigurator.getBlocksFromFilesystem()
+    print(ModularConfigurator.blocks)
+    ModularConfigurator.iterateThroughBlockFolders(ModularConfigurator.blocks)
+    # ModularConfigurator.exportToPNG()
+
+    # print(ModularConfigurator.parseFolderConfig("/Users/Skyward/Documents/clo/Assets/Blocks/Man/Jackets/Jackets.conf"))
+
 
     # exportToPNG()
+
+    # blockFolders = ["Man", "Woman"]
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

@@ -8,8 +8,22 @@ class ModularConfigurator:
     ## Distance between block folders
     distanceBetweenBlocks = 75
 
+    # In the case of Jackets, Double, Single, etc
+    garmentSubTypeStartingPoint = [325, 388]
+
+    garmentTypeFoldersToInclude = [0]
+
+    ## A master list of all blocks
+    blocks = {}
+
     ## Distance bewteen the actual garment peices (fronts, backs, sleeves, etc.)
     distanceBetweenGarmentVertical = 119
+
+    ## Is the Modular Configurator at the top most level. Folders are positioned differently when it is.
+    isAtTopLevel = True
+
+    def __init__(self):
+        self.data = []
 
     @staticmethod
     def log(msg):
@@ -39,7 +53,28 @@ class ModularConfigurator:
     def moveToBlocks():
         pyautogui.moveTo(blockFolderStartingPoint)
 
-    # Iterate through all the blocks
+    @staticmethod
+    def iterateThroughGarmentSubtypeBlocks():
+        # In the case of Jackets, Double, Single, etc
+        garmentSubTypeStartingPoint = [325, 388]
+
+        garmentTypeFoldersToInclude = [0]
+
+        # Double, Single Jacket subtype
+        for k in garmentTypeFoldersToInclude:
+            ModularConfigurator.log("Move to a garment subtype...")
+            pyautogui.moveTo(
+                garmentSubTypeStartingPoint[0] + ModularConfigurator.distanceBetweenBlocks * k,
+                garmentSubTypeStartingPoint[1]
+            )
+            pyautogui.doubleClick()
+
+            # Start to go back up -- out of subtype
+            ## Double Click on the .. folder
+            time.sleep(3)
+            pyautogui.moveTo(ModularConfigurator.blockFolderStartingPoint)
+            pyautogui.doubleClick()
+
     @staticmethod
     def exportToPNG(filename):
         time.sleep(3)
@@ -55,8 +90,34 @@ class ModularConfigurator:
         # # Type into the save box some file name. This might become an argument to this function
         # pyautogui.write(filename)
         # ModularConfigurator.clickOSSave()
+
     @staticmethod
-    def iterateThroughGarmentBlocks():
+    def clickOSSave():
+        # TODO Detect where the OS Save is
+        # saveButtonBox = pyautogui.locateOnScreen('screenshotsForDetection/button-save-macOS.png')
+        pyautogui.moveTo(1068, 529)
+
+        # Click the Save button
+        pyautogui.click()
+        time.sleep(10)
+        # Click the final CLO save dialog
+        pyautogui.click(x=898, y=541)
+        time.sleep(10)
+
+        # if (saveButtonBox == None):
+        #     # What should I do here?
+        #     return
+        # else:
+        #     pyautogui.moveTo(saveButtonBox)
+        #     # Click the Save button
+        #     pyautogui.click()
+        #     time.sleep(1)
+        #     # Click the final CLO save dialog
+        #     pyautogui.click(x=898, y=541)
+        #     time.sleep(3)
+
+    @staticmethod
+    def iterateThroughGarmentBlocks(garmentTypesAndBlockCategories):
         ModularConfigurator.log("Iterating through the garment blocks...")
         garmentStartingPoint = [320, 484]
 
@@ -67,13 +128,13 @@ class ModularConfigurator:
         ## Don't render anything until a full outfit is made
         madeFullOutfit = False
 
-        # Garment columns (variants)
-        for i in [0,1,2]:
-
-            # pieces (front, back, sleeve)
-            garmentsRowsToInclude = [0, 1, 2]
-            for j in garmentsRowsToInclude:
-                ModularConfigurator.log("Moving to the garment piece...")
+        i = 0
+        # Body Front, Body Back, Sleeves, etc.
+        for blockCategory in garmentTypesAndBlockCategories:
+            ModularConfigurator.log("Block category ..." + blockCategory)
+            j = 0
+            for block in blockCategory:
+                ModularConfigurator.log("Moving to the garment piece..." + block)
                 pyautogui.moveTo(
                     garmentStartingPoint[0] + distanceBetweenGarmentHoriz * i,
                     garmentStartingPoint[1] + distanceBetweenGarmentVertical * j
@@ -85,66 +146,203 @@ class ModularConfigurator:
                 time.sleep(3)
 
                 if (madeFullOutfit):
-                    filename = "garment" + str(i) + "-" + str(j)
+                    filename = garmentSubType + "-" + blockCategory
                     ModularConfigurator.exportToPNG(filename)
+
+                j += 1
 
             # Full outfit is made,
             if (madeFullOutfit == False):
                 madeFullOutfit = True
-                filename = "garment" + str(i) + "-" + str(j)
+                filename = garmentSubType + "-" + blockCategory
                 ModularConfigurator.exportToPNG(filename)
+
+            i += 1
+
         ModularConfigurator.log("Complete for this modular type...")
+
+    @staticmethod
+    def sortGarmentsLikeClo(garment):
+        garmentName = list(garment.keys())[0]
+        listOfGarmentTypes = [
+            'collar',
+            'body_front',
+            'body_back',
+            'body',
+            'sleeves',
+            'cuffs'
+        ]
+        return listOfGarmentTypes.index(garmentName)
+
+    @staticmethod
+    def parseFolderConfig(configFilePath):
+        import configparser
+        config = configparser.ConfigParser()
+        config.read(configFilePath)
+
+        ## The garment subtypes (Double & Single)
+        garmentSubTypes = config['Activate_Configurator_Info']['None\Activate_List'].lower().split(', ')
+
+        ## Make a master data structure, nested tree-like structure of garment types and their block categories.
+        garmentTypesAndBlockCategories = {}
+
+        for garmentSubType in garmentSubTypes:
+            ## Number of blocks for the garment subtype
+            blockCategories = []
+            for key in config['Activate_Configurator_Info']:
+                # if "jacket.double" is in "none\jacket.double\body_back\activate_list"
+                if (garmentSubType in key):
+                    ## Extract only the block category name (body back, body front, sleeves)
+                    blockCategory = key.replace("none", "")
+                    blockCategory = blockCategory.replace(garmentSubType, "")
+                    blockCategory = blockCategory.replace("activate_list", "")
+                    blockCategory = blockCategory.replace("\\", "")
+
+                    blocksString = config['Activate_Configurator_Info'][key]
+                    blocksString = blocksString.replace('.zblc', '')
+
+                    blocks = blocksString.split(", ")
+
+                    # Prettyify the block names
+                    i = 0
+                    for block in blocks:
+                        try:
+                            blocks[i] = block.split('.')[1]
+                        except IndexError:
+                            x = 3
+                        i += 1
+
+                    blocksInCategory = {}
+
+                    blocksInCategory[blockCategory] = blocks
+
+                    blockCategory = blocksInCategory
+
+                    blockCategories.append(blockCategory)
+                    blockCategories = sorted(blockCategories, key=ModularConfigurator.sortGarmentsLikeClo)
+            garmentTypesAndBlockCategories[garmentSubType] = blockCategories
+
+        return garmentTypesAndBlockCategories
+
+    ## The individual folder process of working with the filesystem
+    @staticmethod
+    def exploreBlockFolder(folderPath):
+        # Things to do for each folder
+        directoriesInPath = folderPath.split('/')
+        currentFolderName = directoriesInPath[-1]
+
+        # Special Folders to omit
+        foldersToOmit = "Assets/Blocks/Folded Shirt"
+
+        #
+        listOfDirectories = {}
+
+        # Iterate over the other files and folders
+        import os
+        your_path = folderPath
+        files = os.listdir(your_path)
+        sortedFiles = sorted(files)
+        for file in sortedFiles:
+            subfolders = {}
+            filePath = os.path.join(your_path, file)
+            # If it is a directory
+            if os.path.isfile(filePath):
+                ## Is it a config file (.conf)
+                if ".conf" in filePath:
+                    ## Get block information fron the config file, such as how many blocks are in each category.
+                    listOfDirectories = ModularConfigurator.parseFolderConfig(filePath)
+
+            else:
+                folderPath = filePath
+
+                directories = folderPath.split("/")
+                ## Last folder in the path is the current folder
+                nameOfFolder = directories[-1]
+
+                if (foldersToOmit in folderPath):
+                    # Do nothing
+                    x = 3
+                else:
+                    # If this is not an omitted folder, explore it
+                    subfolders = ModularConfigurator.exploreBlockFolder(folderPath)
+
+                listOfDirectories[nameOfFolder] = subfolders
+
+        return listOfDirectories
+
+    ## extract information about the blocks from the filesystem, before we interact with the CLO UI
+    @staticmethod
+    def getBlocksFromFilesystem():
+        # Modular configurator stores the blocks on the filesystem. Reading from the filesystem has advantages
+        # ... to reading from the screen via OCR.
+        pathToBlocks = '/Users/Skyward/Documents/clo/Assets/Blocks'
+        ## Save this in the master list of blocks
+        ModularConfigurator.blocks = ModularConfigurator.exploreBlockFolder(pathToBlocks)
 
     # Iterate through all the garment folders
     @staticmethod
-    def iterateThroughBlockFolders():
-        # Omit folded shirts
-        blockFoldersToInclude = [1,2]
+    def iterateThroughBlockFolders(startingFolder):
+        # ModularConfigurator.log("Now inside to the " + startingFolder + " folder...")
         # Loop over Blocks (Folded shirts, Men, women)
-        for i in blockFoldersToInclude:
-            ModularConfigurator.log("Moving to a folder...")
-            pyautogui.moveTo(
-                ModularConfigurator.blockFolderStartingPoint[0] + ModularConfigurator.distanceBetweenBlocks * i,
-                ModularConfigurator.blockFolderStartingPoint[1]
-            )
-            ## Double click on Folder
-            ModularConfigurator.log("Open the folder...")
-            pyautogui.doubleClick()
-            time.sleep(3)
-            ## Double click on Garment Type folder (Jackets Polos, Shirts)
-            pyautogui.doubleClick()
-            time.sleep(3)
 
-            garmentTypeFoldersToInclude = [1]
-            for j in garmentTypeFoldersToInclude:
-                ModularConfigurator.log("Moving to something...")
+        if ModularConfigurator.isAtTopLevel:
+            i = 0
+        else:
+            ## Don't start with the .. / Up folder.
+            i = 1
+
+        k = 0
+        for folderName in startingFolder:
+            # If the "subfolder" has a dot, it isn't a folder its garment type (single, double, etc)
+            if "." in folderName:
+                # Begin to iterate over these garments and their blocks
+                print("Iterating over garment " + folderName)
+
+                # Click the garment type (Single or double)
                 pyautogui.moveTo(
-                    ModularConfigurator.blockFolderStartingPoint[0] + ModularConfigurator.distanceBetweenBlocks * j,
+                    ModularConfigurator.garmentSubTypeStartingPoint[0] + ModularConfigurator.distanceBetweenBlocks * k,
+                    ModularConfigurator.garmentSubTypeStartingPoint[1]
+                )
+                pyautogui.doubleClick()
+                # Advanced to the next garment type
+                k += 1
+
+                ModularConfigurator.iterateThroughGarmentBlocks(startingFolder[folderName])
+            else:
+                ModularConfigurator.log("Moving to the " + folderName + " folder...")
+                pyautogui.moveTo(
+                    ModularConfigurator.blockFolderStartingPoint[0] + ModularConfigurator.distanceBetweenBlocks * i,
                     ModularConfigurator.blockFolderStartingPoint[1]
                 )
+                ## Double click on Folder
+                ModularConfigurator.log("Open the folder...")
+                pyautogui.doubleClick()
+                ModularConfigurator.isAtTopLevel = False
+                time.sleep(3)
 
-                # In the case of Jackets, Double, Single, etc
-                garmentSubTypeStartingPoint = [325, 388]
+                ModularConfigurator.iterateThroughBlockFolders(startingFolder[folderName])
 
-                garmentTypeFoldersToInclude = [0]
-
-                # Double, Single Jacket subtype
-                for k in garmentTypeFoldersToInclude:
-                    ModularConfigurator.log("Move to a garment subtype...")
-                    pyautogui.moveTo(
-                        garmentSubTypeStartingPoint[0] + ModularConfigurator.distanceBetweenBlocks * k,
-                        garmentSubTypeStartingPoint[1]
-                    )
-                    pyautogui.doubleClick()
-
-                    # Start to go back up -- out of subtype
-                    ## Double Click on the .. folder
-                    time.sleep(3)
-                    pyautogui.moveTo(ModularConfigurator.blockFolderStartingPoint)
-                    pyautogui.doubleClick()
-
-                # Start to go back up -- out of garment type
+                # Go back up
                 ## Double Click on the .. folder
                 time.sleep(3)
                 pyautogui.moveTo(ModularConfigurator.blockFolderStartingPoint)
                 pyautogui.doubleClick()
+
+            # ## Double click on Garment Type folder (Jackets Polos, Shirts)
+            # pyautogui.doubleClick()
+            # time.sleep(3)
+
+            # if len(ModularConfigurator.blocks[folderName]) == 0:
+            #     continue
+
+            # for subfolder in startingFolder[folderName]:
+            #     # If the "subfolder" has a dot, it isn't a folder its garment type (single, double, etc)
+            #     if "." in subfolder:
+            #         # Begin to iterate over these garments and their blocks
+            #         print("Iterating over garment " + subfolder)
+            #     else:
+            #         print("Has Subfolder " + subfolder)
+            #         print(startingFolder[folderName][subfolder])
+            #         ModularConfigurator.iterateThroughBlockFolders(startingFolder[folderName][subfolder])
+
+            i += 1
