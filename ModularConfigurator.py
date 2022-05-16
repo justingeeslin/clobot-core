@@ -131,9 +131,14 @@ class ModularConfigurator:
         i = 0
         # Body Front, Body Back, Sleeves, etc.
         for blockCategory in garmentTypesAndBlockCategories:
-            ModularConfigurator.log("Block category ..." + blockCategory)
+            ModularConfigurator.log("Block category ...")
+            ModularConfigurator.log(blockCategory)
             j = 0
-            for block in blockCategory:
+            blockCategoryName = list(blockCategory.keys())[0];
+            blocks = blockCategory[list(blockCategory.keys())[0]]
+
+            # Items within body front
+            for block in blocks:
                 ModularConfigurator.log("Moving to the garment piece..." + block)
                 pyautogui.moveTo(
                     garmentStartingPoint[0] + distanceBetweenGarmentHoriz * i,
@@ -146,7 +151,7 @@ class ModularConfigurator:
                 time.sleep(3)
 
                 if (madeFullOutfit):
-                    filename = garmentSubType + "-" + blockCategory
+                    filename = "Add information about the blocks applied"
                     ModularConfigurator.exportToPNG(filename)
 
                 j += 1
@@ -154,7 +159,7 @@ class ModularConfigurator:
             # Full outfit is made,
             if (madeFullOutfit == False):
                 madeFullOutfit = True
-                filename = garmentSubType + "-" + blockCategory
+                filename = "Add information about the blocks applied"
                 ModularConfigurator.exportToPNG(filename)
 
             i += 1
