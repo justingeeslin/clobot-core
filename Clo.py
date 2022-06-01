@@ -27,7 +27,8 @@ class Clo:
         # Is there a cancel button?
         try:
             box = pyautogui.locateOnScreen('screenshotsForDetection/clo_button_cancel.png')
-        except:            x = 3
+        except:
+            x = 3
 
         if box != None:
             isPrompting = True
@@ -35,7 +36,6 @@ class Clo:
             isPrompting = False
 
         return isPrompting
-
     @staticmethod
     def snapshot3DWindow(filename):
         import random
@@ -112,8 +112,19 @@ class Clo:
         except:
             x = 3
 
-        buttonPoint = pyautogui.center(box)
-        buttonX, buttonY = buttonPoint
+        if box != None:
+            buttonPoint = pyautogui.center(box)
+            buttonX, buttonY = buttonPoint
+            pyautogui.click(buttonX / 2, buttonY / 2)
+
+    @staticmethod
+    def clickSave():
+        try:
+            box = pyautogui.locateOnScreen('screenshotsForDetection/clo_button_save.png')
+        except:
+            x = 3
 
         if box != None:
+            buttonPoint = pyautogui.center(box)
+            buttonX, buttonY = buttonPoint
             pyautogui.click(buttonX / 2, buttonY / 2)
