@@ -80,47 +80,6 @@ class ModularConfigurator:
             pyautogui.moveTo(ModularConfigurator.blockFolderStartingPoint)
             pyautogui.doubleClick()
 
-    @staticmethod
-    def exportToPNG(filename):
-        time.sleep(3)
-        pyautogui.hotkey('command', 'shift', '3')
-        time.sleep(3)
-        # # Export / Open the Export prompt
-        # pyautogui.press('f10')
-        # time.sleep(10)
-        #
-        # # Focus the Save File dialog input
-        # pyautogui.click(x=700, y=155)
-        #
-        # # Type into the save box some file name. This might become an argument to this function
-        # pyautogui.write(filename)
-        # ModularConfigurator.clickOSSave()
-
-    @staticmethod
-    def clickOSSave():
-        # TODO Detect where the OS Save is
-        # saveButtonBox = pyautogui.locateOnScreen('screenshotsForDetection/button-save-macOS.png')
-        pyautogui.moveTo(1068, 529)
-
-        # Click the Save button
-        pyautogui.click()
-        time.sleep(10)
-        # Click the final CLO save dialog
-        pyautogui.click(x=898, y=541)
-        time.sleep(10)
-
-        # if (saveButtonBox == None):
-        #     # What should I do here?
-        #     return
-        # else:
-        #     pyautogui.moveTo(saveButtonBox)
-        #     # Click the Save button
-        #     pyautogui.click()
-        #     time.sleep(1)
-        #     # Click the final CLO save dialog
-        #     pyautogui.click(x=898, y=541)
-        #     time.sleep(3)
-
     ## Individual action for the recursive process
     @staticmethod
     def iterateThroughGarmentBlockRow(garmentTypesAndBlockCategories, rowIndex, colIndex):
