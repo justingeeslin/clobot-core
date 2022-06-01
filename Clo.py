@@ -37,13 +37,34 @@ class Clo:
         return isPrompting
 
     @staticmethod
+    def snapshot3DWindow(filename):
+        import random
+        # # Export / Open the Export prompt
+        pyautogui.press('f10')
+        time.sleep(10)
+
+        ## Focus the save as input field - MacOS save box
+        # pyautogui.press('tab')
+        # pyautogui.press('tab')
+        # pyautogui.press('tab')
+        Clo.focusOSSaveAsInput()
+
+        # # Type into the save box some file name. This might become an argument to this function
+        # number = '01234567894830347690328420357'
+        # pyautogui.write("test-" + random.choice(number))
+        pyautogui.write(filename)
+        Clo.clickOSSave()
+
+        # Handle the CLO export prompt
+        Clo.clickSave()
+
+    @staticmethod
     def clickOSSave():
         # Detect where the OS Save is
         try:
             box = pyautogui.locateOnScreen('screenshotsForDetection/button-save-macOS.png')
         except:
             x = 3
-
         if box != None:
             buttonPoint = pyautogui.center(box)
             buttonX, buttonY = buttonPoint
