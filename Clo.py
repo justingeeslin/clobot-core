@@ -37,13 +37,48 @@ class Clo:
         return isPrompting
 
     @staticmethod
+    def clickOSSave():
+        # Detect where the OS Save is
+        try:
+            box = pyautogui.locateOnScreen('screenshotsForDetection/button-save-macOS.png')
+        except:
+            x = 3
+
+        if box != None:
+            buttonPoint = pyautogui.center(box)
+            buttonX, buttonY = buttonPoint
+            pyautogui.click(buttonX / 2, buttonY / 2)
+
+            # Click the final CLO save dialog
+            Clo.clickOK()
+            time.sleep(10)
+        else:
+            print("Couldn't find OS save..")
+            print(box)
+
+    @staticmethod
+    def focusOSSaveAsInput():
+        try:
+            box = pyautogui.locateOnScreen('screenshotsForDetection/input-saveas-macOS.png')
+        except:
+            x = 3
+
+        if box != None:
+            buttonPoint = pyautogui.center(box)
+            buttonX, buttonY = buttonPoint
+            ## Adding pixels here to go to the right of the label
+            pyautogui.click( (buttonX / 2) + 60, buttonY / 2)
+        else:
+            print("Couldn't find OS save as input..")
+            print(box)
+
+    @staticmethod
     def clickCancel():
         # Is there a cancel button?
         try:
             box = pyautogui.locateOnScreen('screenshotsForDetection/clo_button_cancel.png')
         except:
             x = 3
-
         buttonPoint = pyautogui.center(box)
         buttonX, buttonY = buttonPoint
         if box != None:
