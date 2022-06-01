@@ -27,6 +27,15 @@ class ModularConfigurator:
     ## Are there active blocks on the configurator. Is CLO going to prompt when I switch from Double to Single
     areBlocksActive = False
 
+    ## Don't snapshot until a full outfit has been made
+    madeFullOutfit = False
+
+    ## Wait for things, but keep up with how long you're waiting
+    sleepCounter = 0
+
+    ## Break from waiting for something if it takes too long, more than this number
+    maxTimeToSleep = 10
+
     def __init__(self):
         self.data = []
 
@@ -89,7 +98,7 @@ class ModularConfigurator:
         try:
             blockName = garmentRow[garmentRowName][colIndex]
         except IndexError:
-            ModularConfigurator.log("No block at " + colIndex + " for " + garmentRowName);
+            # ModularConfigurator.log("No block at " + colIndex + " for " + garmentRowName);
             return
 
         ModularConfigurator.log("Exploring " + garmentRowName + ", " + blockName)
@@ -109,14 +118,27 @@ class ModularConfigurator:
         ModularConfigurator.log("Loading garment piece...")
         pyautogui.doubleClick()
         # Wait for it to load - TODO replace with an isLoading to see if this makes it faster.
-        time.sleep(3)
-        ModularConfigurator.log('Taking a screenshot..')
+        # time.sleep(3)
+        while Clo.isLoading():
+            ModularConfigurator.log("Sleeping while this loads...")
+            pyautogui.sleep(1)
+
+        if ModularConfigurator.madeFullOutfit:
+            ModularConfigurator.log('Taking a screenshot..')
+
+            Clo.snapshot3DWindow("" + garmentRowName + "-" + blockName + "-" + str(colIndex) + "-" + str(rowIndex) )
+        else:
+            ModularConfigurator.log('Skipping snapshot for now, still making an entire outfit.')
 
         if len(garmentTypesAndBlockCategories) > rowIndex+1:
             ModularConfigurator.iterateThroughGarmentBlockRow(garmentTypesAndBlockCategories, rowIndex+1, colIndex)
 
+        ModularConfigurator.madeFullOutfit = True
+
         if len(garmentTypesAndBlockCategories[rowIndex][garmentRowName]) > colIndex + 1:
             ModularConfigurator.iterateThroughGarmentBlockRow(garmentTypesAndBlockCategories, rowIndex, colIndex + 1)
+
+        ModularConfigurator.madeFullOutfit = False
 
     @staticmethod
     def iterateThroughGarmentBlocks(garmentTypesAndBlockCategories):
@@ -278,13 +300,22 @@ class ModularConfigurator:
                 k += 1
 
                 if ModularConfigurator.areBlocksActive:
+
+                    ModularConfigurator.sleepCounter = 0
                     while not Clo.isLoading():
                         ModularConfigurator.log("Sleeping while you load the loading..")
                         time.sleep(1)
+                        ModularConfigurator.sleepCounter += 1
+                        if ModularConfigurator.sleepCounter > ModularConfigurator.maxTimeToSleep:
+                            break
 
+                    ModularConfigurator.sleepCounter = 0
                     while Clo.isLoading():
                         ModularConfigurator.log("Sleeping while you load the prompt..")
                         time.sleep(1)
+                        ModularConfigurator.sleepCounter += 1
+                        if ModularConfigurator.sleepCounter > ModularConfigurator.maxTimeToSleep:
+                            break
 
                     ## Check to see if CLO is prompting
                     ModularConfigurator.log("Is CLO prompting? ")
@@ -307,14 +338,19 @@ class ModularConfigurator:
                     ModularConfigurator.blockFolderStartingPoint[0] + ModularConfigurator.distanceBetweenBlocks * i,
                     ModularConfigurator.blockFolderStartingPoint[1]
                 )
-                time.sleep(3)
+
+                while Clo.isLoading():
+                    time.sleep(1)
+
                 ## Double click on Folder
                 ModularConfigurator.log("Open the folder...")
                 pyautogui.doubleClick()
+
+                while Clo.isLoading():
+                    time.sleep(1)
                 ModularConfigurator.isAtTopLevel = False
                 ## When switching folders, CLO will not try to prompt to replace from comperable blocks
                 ModularConfigurator.areBlocksActive = False
-                time.sleep(3)
 
                 ModularConfigurator.iterateThroughBlockFolders(startingFolder[folderName])
 
