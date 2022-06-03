@@ -10,25 +10,46 @@ class Clo:
     #     os.system("""osascript -e 'tell app "TextEdit" to open'""")
 
     # Minimize the vision detection by storing coordinates. Assumes some elements won't move during Clobot's running.
+    # Taken at a 1440 x 900 resolution
     cachedCoordinates = {
         # Not sure why these have to be multiplied by to. Retina displays?
 
         # OS Level elements
-        'osSaveAsInput': [819*2, 192*2],
-        'osSaveButton': [1181*2, 564*2],
+        'osSaveAsInput': [819*2, 155*2],
+        'osSaveButton': [1051*2, 526*2],
 
         # Clo UI elements
-        'snapshotSaveButton' : [1021*2, 614*2]
+        'snapshotSaveButton' : [909*2, 544*2],
+        # Possibly a general dialog affirmative location
+        'proceedButton' : [664, 478]
     }
 
     freeGB = 0
 
-    def __init__(self):
+    @staticmethod
+    def pre():
+        ## Determine the screen resolution
+        currentResolution = Clo.getWindowSize()
+
+        ## Determine a scaling factor
+        xScale = currentResolution[0] / 1440
+        yScale = currentResolution[1] / 900
+
+        ## Update the coordinate list
+        for coordName in Clo.cachedCoordinates:
+            x,y = Clo.cachedCoordinates[coordName]
+            x = x * xScale
+            y = y * yScale
+            Clo.cachedCoordinates[coordName] = [x,y]
+
+        ## Determine disk space - useful for determining if some prompts regarding low disk space will appear
         total, used, free = shutil.disk_usage("/")
-        Clo.freeGB = Clo.free // (2 ** 30)
+        Clo.freeGB = free // (2 ** 30)
 
     @staticmethod
     def getWindowSize():
+        ## TODO Add logic here to detect the window size not just the screen res. You might CV the little refersh button in the lower right corner
+
         return pyautogui.size()
 
     @staticmethod
@@ -63,11 +84,16 @@ class Clo:
         pyautogui.press('f10')
 
         ## Issue a click to the Warning dialog, aboout file size. As I understand it CLO will prompt if you have less than 10GB free
+        print("Free GB:")
+        print(Clo.freeGB)
         if Clo.freeGB < 10:
+
             while not Clo.isPrompting():
+                print("Sleeping while we wait for the disk space prompt..")
                 pyautogui.sleep(1)
-            # Click proceed
-            pyautogui.click(792, 548)
+            # Click Proceed
+            print("I see the disk space prompt.. clicking Proceed.")
+            pyautogui.click(Clo.cachedCoordinates['proceedButton'][0], Clo.cachedCoordinates['proceedButton'][1])
 
         pyautogui.sleep(10)
 
