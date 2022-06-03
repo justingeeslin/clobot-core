@@ -35,8 +35,10 @@ def deleteGarment():
 # ex pyautogui.locateOnScreen('someButton.png', region=(0,0, 300, 400), grayscale=True)
 
 if __name__ == '__main__':
+    Clo.pre()
     try:
         print(Clo.getWindowSize())
+
         print('Please switch to CLO..')
         for i in range(5).__reversed__():
             print(i+1)
@@ -54,16 +56,28 @@ if __name__ == '__main__':
         beepy.beep(sound="error")
 
     # Focus Clo window
-    # pyautogui.click(x=17, y=81)
+    pyautogui.click(x=17, y=81)
+
+    # pyautogui.moveTo(328, 727)
+    # pyautogui.scroll(-120)
+
+    # Click the scroll down button
+    pyautogui.click(x=492, y=748, clicks = 8)
 
     # deleteGarment()
+    # pyautogui.screenshot('my_screenshot.png')
+    # Clo.snapshot3DWindow()
 
+    # ModularConfigurator.exportToPNG("test")
     # ModularConfigurator.open()
     # ModularConfigurator.tryOnAllMensBlocks()
     # ModularConfigurator.iterateThroughGarmentBlocks()
-    ModularConfigurator.getBlocksFromFilesystem()
+    # ModularConfigurator.getBlocksFromFilesystem()
     # print(ModularConfigurator.blocks)
-    ModularConfigurator.iterateThroughBlockFolders(ModularConfigurator.blocks)
+    # Run through all blocks
+    #ModularConfigurator.iterateThroughBlockFolders(ModularConfigurator.blocks)
+    # Start in a particular folder - navigate to this folder manually in CLO before running
+    # ModularConfigurator.iterateThroughBlockFolders(ModularConfigurator.blocks['Man']['Shirts'])
     # ModularConfigurator.exportToPNG()
 
     # print(ModularConfigurator.parseFolderConfig("/Users/Skyward/Documents/clo/Assets/Blocks/Man/Jackets/Jackets.conf"))
