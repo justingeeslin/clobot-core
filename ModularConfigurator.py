@@ -117,8 +117,7 @@ class ModularConfigurator:
         # Double click on Double, Single, etc.
         ModularConfigurator.log("Loading garment piece...")
         pyautogui.doubleClick()
-        # Wait for it to load - TODO replace with an isLoading to see if this makes it faster.
-        # time.sleep(3)
+        # Wait for it to load
         while Clo.isLoading():
             ModularConfigurator.log("Sleeping while this loads...")
             pyautogui.sleep(1)
