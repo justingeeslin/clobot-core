@@ -8,6 +8,9 @@ class CLOBot():
     @staticmethod
     def testSimulate():
         mdm = MarvelousDesignerModule()
+        ## Enable drapping
         mdm.SimulationOn(1)
+        ## Load the modular configurator blocks
         mdm.LoadZmdrFileWithZblc("C:\Users\Public\Documents\CLO\Assets\Blocks\Man\Polos\Polo.Set-In.zmdr", ["C:\Users\Public\Documents\CLO\Assets\Blocks\Man\Polos\Collar.ButtonDown.zblc", "C:\Users\Public\Documents\CLO\Assets\Blocks\Man\Polos\Body_Set-In.Regular.zblc"])
+        ## High-quality render of the image
         mdm.ExportRenderingImage("I:\exportRenderImage.png")
