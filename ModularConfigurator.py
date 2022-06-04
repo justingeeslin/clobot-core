@@ -4,6 +4,12 @@ import time
 from Clo import Clo
 
 class ModularConfigurator:
+
+    ## A list of zblocks to add to the avatar
+    zBlocksToSimulate = []
+
+    currentZMDRFile = ""
+
     # Might Vary
     ## Might get the position of the modular configurator panel then move from there.
     blockFolderStartingPoint = [275, 192]
@@ -100,32 +106,28 @@ class ModularConfigurator:
         except IndexError:
             # ModularConfigurator.log("No block at " + colIndex + " for " + garmentRowName);
             return
+        blocks = garmentRow[garmentRowName]
 
         ModularConfigurator.log("Exploring " + garmentRowName + ", " + blockName)
 
-        garmentStartingPoint = [320, 484]
 
-        # Distance bewteen the actual garment peices (fronts, backs, sleeves, etc.)
-        distanceBetweenGarmentHoriz = 70
-        distanceBetweenGarmentVertical = 120
-
-        ModularConfigurator.log("Moving to the garment piece...")
-        pyautogui.moveTo(
-            garmentStartingPoint[0] + distanceBetweenGarmentHoriz * colIndex,
-            garmentStartingPoint[1] + distanceBetweenGarmentVertical * rowIndex
-        )
         # Double click on Double, Single, etc.
         ModularConfigurator.log("Loading garment piece...")
-        pyautogui.doubleClick()
-        # Wait for it to load
-        while Clo.isLoading():
-            ModularConfigurator.log("Sleeping while this loads...")
-            pyautogui.sleep(1)
+
+        ## Add this Zblock to the list of blocks to simulate
+        ModularConfigurator.zBlocksToSimulate.append(garmentRowName + "-" + blockName)
+
+        if len(garmentTypesAndBlockCategories) <= rowIndex + 1:
+            ModularConfigurator.madeFullOutfit = True
 
         if ModularConfigurator.madeFullOutfit:
-            ModularConfigurator.log('Taking a screenshot..')
+            ModularConfigurator.log('Rendering..' + garmentRowName + "-" + blockName)
 
-            Clo.snapshot3DWindow("" + garmentRowName + "-" + blockName + "-" + str(colIndex) + "-" + str(rowIndex) )
+            ## Load the garments
+            # mdm.LoadZmdrFileWithZblc(ModularConfigurator.currentZMDRFile, ModularConfigurator.zBlocksToSimulate)
+            ## Call for the high quality render
+            # mdm.ExportRenderingImage("I:\exportRenderImage.png")
+            #Clo.snapshot3DWindow("" + garmentRowName + "-" + blockName + "-" + str(colIndex) + "-" + str(rowIndex) )
         else:
             ModularConfigurator.log('Skipping snapshot for now, still making an entire outfit.')
 
@@ -143,15 +145,12 @@ class ModularConfigurator:
     def iterateThroughGarmentBlocks(garmentTypesAndBlockCategories):
         ModularConfigurator.log("Iterating through the garment blocks...")
 
-
-
         ## Don't render anything until a full outfit is made
         madeFullOutfit = False
 
         ModularConfigurator.iterateThroughGarmentBlockRow(garmentTypesAndBlockCategories, 0, 0);
 
         ModularConfigurator.log("Complete for this modular type...")
-
     @staticmethod
     def sortGarmentsLikeClo(garment):
         garmentName = list(garment.keys())[0]
@@ -288,92 +287,16 @@ class ModularConfigurator:
             if "." in folderName:
                 # Begin to iterate over these garments and their blocks
                 print("Iterating over garment " + folderName)
+                ## Set the ZMDR file
+                ModularConfigurator.currentZMDRFile = folderName + ".zmdr"
 
-                # Click the garment type (Single or double)
-                pyautogui.moveTo(
-                    ModularConfigurator.garmentSubTypeStartingPoint[0] + ModularConfigurator.distanceBetweenBlocks * k,
-                    ModularConfigurator.garmentSubTypeStartingPoint[1]
-                )
-                pyautogui.doubleClick()
-                # Advanced to the next garment type
-                k += 1
-
-                if ModularConfigurator.areBlocksActive:
-
-                    ModularConfigurator.sleepCounter = 0
-                    while not Clo.isLoading():
-                        ModularConfigurator.log("Sleeping while you load the loading..")
-                        time.sleep(1)
-                        ModularConfigurator.sleepCounter += 1
-                        if ModularConfigurator.sleepCounter > ModularConfigurator.maxTimeToSleep:
-                            break
-
-                    ModularConfigurator.sleepCounter = 0
-                    while Clo.isLoading():
-                        ModularConfigurator.log("Sleeping while you load the prompt..")
-                        time.sleep(1)
-                        ModularConfigurator.sleepCounter += 1
-                        if ModularConfigurator.sleepCounter > ModularConfigurator.maxTimeToSleep:
-                            break
-
-                    ## Check to see if CLO is prompting
-                    ModularConfigurator.log("Is CLO prompting? ")
-                    if Clo.isPrompting():
-                        ModularConfigurator.log("Clicking OK in the prompt")
-                        Clo.clickOK()
-
-                        ## Wait while clo loads comperable blocks
-                        while Clo.isLoading():
-                            ModularConfigurator.log("Sleeping while you load comperable blocks..")
-                            time.sleep(1)
-
-                ModularConfigurator.log("thank u next")
                 ModularConfigurator.iterateThroughGarmentBlocks(startingFolder[folderName])
-                ModularConfigurator.areBlocksActive = True
 
             else:
                 ModularConfigurator.log("Moving to the " + folderName + " folder...")
-                pyautogui.moveTo(
-                    ModularConfigurator.blockFolderStartingPoint[0] + ModularConfigurator.distanceBetweenBlocks * i,
-                    ModularConfigurator.blockFolderStartingPoint[1]
-                )
-
-                while Clo.isLoading():
-                    time.sleep(1)
-
-                ## Double click on Folder
-                ModularConfigurator.log("Open the folder...")
-                pyautogui.doubleClick()
-
-                while Clo.isLoading():
-                    time.sleep(1)
-                ModularConfigurator.isAtTopLevel = False
-                ## When switching folders, CLO will not try to prompt to replace from comperable blocks
-                ModularConfigurator.areBlocksActive = False
 
                 ModularConfigurator.iterateThroughBlockFolders(startingFolder[folderName])
 
                 # Go back up
-                ## Double Click on the .. folder
-                time.sleep(3)
-                pyautogui.moveTo(ModularConfigurator.blockFolderStartingPoint)
-                pyautogui.doubleClick()
-
-            # ## Double click on Garment Type folder (Jackets Polos, Shirts)
-            # pyautogui.doubleClick()
-            # time.sleep(3)
-
-            # if len(ModularConfigurator.blocks[folderName]) == 0:
-            #     continue
-
-            # for subfolder in startingFolder[folderName]:
-            #     # If the "subfolder" has a dot, it isn't a folder its garment type (single, double, etc)
-            #     if "." in subfolder:
-            #         # Begin to iterate over these garments and their blocks
-            #         print("Iterating over garment " + subfolder)
-            #     else:
-            #         print("Has Subfolder " + subfolder)
-            #         print(startingFolder[folderName][subfolder])
-            #         ModularConfigurator.iterateThroughBlockFolders(startingFolder[folderName][subfolder])
 
             i += 1
