@@ -2,7 +2,6 @@ from PythonQt import QtCore, QtGui, MarvelousDesignerAPI
 from PythonQt.MarvelousDesignerAPI import *
 import MarvelousDesigner
 from MarvelousDesigner import *
-import pyautogui
 import time
 from itertools import product
 
@@ -59,29 +58,6 @@ class ModularConfigurator:
         ## Replace later when you have a way of showing notifications to the user.
         print(msg)
 
-    #
-    @staticmethod
-    def open():
-        pyautogui.moveTo(14, 259)
-        pyautogui.click()
-
-    @staticmethod
-    def isAtTopLevel():
-
-        box = pyautogui.locateOnScreen('screenshotsForDetection/blocks-breadcrumb.png')
-
-        if box == None:
-            isAtTopLevel = True
-        else:
-            isAtTopLevel = False
-
-        return isAtTopLevel
-
-    # Move to the blocks tab
-    @staticmethod
-    def moveToBlocks():
-        pyautogui.moveTo(blockFolderStartingPoint)
-
     @staticmethod
     def iterateThroughGarmentSubtypeBlocks():
         # In the case of Jackets, Double, Single, etc
@@ -92,17 +68,17 @@ class ModularConfigurator:
         # Double, Single Jacket subtype
         for k in garmentTypeFoldersToInclude:
             ModularConfigurator.log("Move to a garment subtype...")
-            pyautogui.moveTo(
-                garmentSubTypeStartingPoint[0] + ModularConfigurator.distanceBetweenBlocks * k,
-                garmentSubTypeStartingPoint[1]
-            )
-            pyautogui.doubleClick()
+            # pyautogui.moveTo(
+            #     garmentSubTypeStartingPoint[0] + ModularConfigurator.distanceBetweenBlocks * k,
+            #     garmentSubTypeStartingPoint[1]
+            # )
+            # pyautogui.doubleClick()
 
             # Start to go back up -- out of subtype
             ## Double Click on the .. folder
             time.sleep(3)
-            pyautogui.moveTo(ModularConfigurator.blockFolderStartingPoint)
-            pyautogui.doubleClick()
+            # pyautogui.moveTo(ModularConfigurator.blockFolderStartingPoint)
+            # pyautogui.doubleClick()
 
     @staticmethod
     def makeBlockTree(garmentTypesAndBlockCategories):
@@ -157,6 +133,7 @@ class ModularConfigurator:
             filename = ModularConfigurator.activeGarment + '_' + '-'.join(blockSet)
             x=3
 
+            
             mdm = MarvelousDesignerModule()
             ## Enable drapping
             mdm.SimulationOn(1)
@@ -164,6 +141,7 @@ class ModularConfigurator:
             mdm.LoadZmdrFileWithZblc(ModularConfigurator.currentZMDRFile, ModularConfigurator.zBlocksToSimulate)
             # Call for the high quality render
             mdm.ExportRenderingImage("I:\\" + filename + ".png")
+
             ModularConfigurator.countOfSimulations = ModularConfigurator.countOfSimulations + 1
 
         # try:
