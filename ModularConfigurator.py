@@ -1,5 +1,10 @@
+from PythonQt import QtCore, QtGui, MarvelousDesignerAPI
+from PythonQt.MarvelousDesignerAPI import *
+import MarvelousDesigner
+from MarvelousDesigner import *
 import pyautogui
 import time
+from itertools import product
 
 from Clo import Clo
 
@@ -8,7 +13,11 @@ class ModularConfigurator:
     ## A list of zblocks to add to the avatar
     zBlocksToSimulate = []
 
+    activeGarment = ""
+
     currentZMDRFile = ""
+
+    countOfSimulations = 0
 
     # Might Vary
     ## Might get the position of the modular configurator panel then move from there.
@@ -95,6 +104,19 @@ class ModularConfigurator:
             pyautogui.moveTo(ModularConfigurator.blockFolderStartingPoint)
             pyautogui.doubleClick()
 
+    @staticmethod
+    def makeBlockTree(garmentTypesAndBlockCategories):
+        print(garmentTypesAndBlockCategories)
+
+        ModularConfigurator.zBlocksToSimulate
+
+        # for row in garmentTypesAndBlockCategories:
+        #     garmentRowName = list(row.keys())[0]
+        #     rowBlocks = row[garmentRowName]
+        #     for block in rowBlocks:
+        #
+        #     x = 3
+
     ## Individual action for the recursive process
     @staticmethod
     def iterateThroughGarmentBlockRow(garmentTypesAndBlockCategories, rowIndex, colIndex):
@@ -115,31 +137,69 @@ class ModularConfigurator:
         ModularConfigurator.log("Loading garment piece...")
 
         ## Add this Zblock to the list of blocks to simulate
-        ModularConfigurator.zBlocksToSimulate.append(garmentRowName + "-" + blockName)
+        blockFileName = garmentRowName + "-" + blockName + '.zblc'
 
-        if len(garmentTypesAndBlockCategories) <= rowIndex + 1:
-            ModularConfigurator.madeFullOutfit = True
+        ## Make the block combinations
+        listOfBlockLists = []
+        for row in garmentTypesAndBlockCategories:
+            garmentRowName = list(row.keys())[0]
+            rowBlocks = row[garmentRowName]
+            listOfBlockLists.append(rowBlocks)
 
-        if ModularConfigurator.madeFullOutfit:
-            ModularConfigurator.log('Rendering..' + garmentRowName + "-" + blockName)
+        ## A list of block sets to simulate
+        listOfBlockSets = list(product(*listOfBlockLists))
 
-            ## Load the garments
-            # mdm.LoadZmdrFileWithZblc(ModularConfigurator.currentZMDRFile, ModularConfigurator.zBlocksToSimulate)
-            ## Call for the high quality render
-            # mdm.ExportRenderingImage("I:\exportRenderImage.png")
-            #Clo.snapshot3DWindow("" + garmentRowName + "-" + blockName + "-" + str(colIndex) + "-" + str(rowIndex) )
-        else:
-            ModularConfigurator.log('Skipping snapshot for now, still making an entire outfit.')
+        for blockSet in listOfBlockSets:
+            ModularConfigurator.log('Rendering..')
+            ModularConfigurator.log(blockSet)
 
-        if len(garmentTypesAndBlockCategories) > rowIndex+1:
-            ModularConfigurator.iterateThroughGarmentBlockRow(garmentTypesAndBlockCategories, rowIndex+1, colIndex)
+            ## Create a filename from the block set combined with the garment name
+            filename = ModularConfigurator.activeGarment + '_' + '-'.join(blockSet)
+            x=3
 
-        ModularConfigurator.madeFullOutfit = True
+            mdm = MarvelousDesignerModule()
+            ## Enable drapping
+            mdm.SimulationOn(1)
+            # Load the garments
+            mdm.LoadZmdrFileWithZblc(ModularConfigurator.currentZMDRFile, ModularConfigurator.zBlocksToSimulate)
+            # Call for the high quality render
+            mdm.ExportRenderingImage("I:\\" + filename + ".png")
+            ModularConfigurator.countOfSimulations = ModularConfigurator.countOfSimulations + 1
 
-        if len(garmentTypesAndBlockCategories[rowIndex][garmentRowName]) > colIndex + 1:
-            ModularConfigurator.iterateThroughGarmentBlockRow(garmentTypesAndBlockCategories, rowIndex, colIndex + 1)
+        # try:
+        #     ModularConfigurator.zBlocksToSimulate[rowIndex] = blockFileName
+        # except IndexError:
+        #     ModularConfigurator.zBlocksToSimulate.append(blockFileName)
+        #
+        # if len(garmentTypesAndBlockCategories) <= rowIndex + 1:
+        #     ModularConfigurator.madeFullOutfit = True
 
-        ModularConfigurator.madeFullOutfit = False
+        # if ModularConfigurator.madeFullOutfit:
+        #     ModularConfigurator.zBlocksToSimulate
+        #     ModularConfigurator.log('Rendering..')
+        #     ModularConfigurator.log(ModularConfigurator.zBlocksToSimulate)
+        #
+        #     ## Load the garments
+        #     # mdm.LoadZmdrFileWithZblc(ModularConfigurator.currentZMDRFile, ModularConfigurator.zBlocksToSimulate)
+        #     ## Call for the high quality render
+        #     # mdm.ExportRenderingImage("I:\exportRenderImage.png")
+        #     #Clo.snapshot3DWindow("" + garmentRowName + "-" + blockName + "-" + str(colIndex) + "-" + str(rowIndex) )
+        # else:
+        #     ModularConfigurator.log('Skipping snapshot for now, still making an entire outfit.')
+
+        # i = 0
+        # for rows in garmentTypesAndBlockCategories:
+        #     ModularConfigurator.iterateThroughGarmentBlockRow(garmentTypesAndBlockCategories, rowIndex + 1, colIndex)
+        #     i = i + 1
+        #
+        # # if rowIndex+1 < len(garmentTypesAndBlockCategories):
+        # #     ModularConfigurator.iterateThroughGarmentBlockRow(garmentTypesAndBlockCategories, rowIndex+1, colIndex)
+        # #
+        # # if colIndex + 1 < len(garmentTypesAndBlockCategories[rowIndex][garmentRowName]):
+        # #     ModularConfigurator.iterateThroughGarmentBlockRow(garmentTypesAndBlockCategories, rowIndex,
+        # #                                                           colIndex+1)
+        #
+        # ModularConfigurator.madeFullOutfit = False
 
     @staticmethod
     def iterateThroughGarmentBlocks(garmentTypesAndBlockCategories):
@@ -287,6 +347,8 @@ class ModularConfigurator:
             if "." in folderName:
                 # Begin to iterate over these garments and their blocks
                 print("Iterating over garment " + folderName)
+                ModularConfigurator.activeGarment = folderName
+
                 ## Set the ZMDR file
                 ModularConfigurator.currentZMDRFile = folderName + ".zmdr"
 
