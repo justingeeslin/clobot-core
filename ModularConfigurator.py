@@ -1,7 +1,7 @@
-from PythonQt import QtCore, QtGui, MarvelousDesignerAPI
-from PythonQt.MarvelousDesignerAPI import *
-import MarvelousDesigner
-from MarvelousDesigner import *
+# from PythonQt import QtCore, QtGui, MarvelousDesignerAPI
+# from PythonQt.MarvelousDesignerAPI import *
+# import MarvelousDesigner
+# from MarvelousDesigner import *
 import time
 from itertools import product
 
@@ -50,8 +50,21 @@ class ModularConfigurator:
     ## Break from waiting for something if it takes too long, more than this number
     maxTimeToSleep = 10
 
+    ## List of Folders, stack kept during traversal
+    folders = []
+
+    blockFilepath = "C:\\\\Users\Public\Documents\CLO\Assets\\"
+
+    ## A simulation script that can be run inside of CLO
+    scriptToOutput = """
+        mdm = MarvelousDesignerModule()
+        ## Enable drapping
+        mdm.SimulationOn(1)
+        """
+
     def __init__(self):
         self.data = []
+
 
     @staticmethod
     def log(msg):
@@ -112,35 +125,48 @@ class ModularConfigurator:
         # Double click on Double, Single, etc.
         ModularConfigurator.log("Loading garment piece...")
 
-        ## Add this Zblock to the list of blocks to simulate
-        blockFileName = garmentRowName + "-" + blockName + '.zblc'
 
         ## Make the block combinations
         listOfBlockLists = []
         for row in garmentTypesAndBlockCategories:
             garmentRowName = list(row.keys())[0]
             rowBlocks = row[garmentRowName]
-            listOfBlockLists.append(rowBlocks)
+
+            rowBlocksNamed = []
+            for block in rowBlocks:
+                ## Append "Collar" or the type of block it is to the front
+                rowBlocksNamed.append(garmentRowName + "." + block)
+
+            listOfBlockLists.append(rowBlocksNamed)
+
 
         ## A list of block sets to simulate
         listOfBlockSets = list(product(*listOfBlockLists))
-
+        x=3
         for blockSet in listOfBlockSets:
             ModularConfigurator.log('Rendering..')
             ModularConfigurator.log(blockSet)
 
-            ## Create a filename from the block set combined with the garment name
-            filename = ModularConfigurator.activeGarment + '_' + '-'.join(blockSet)
-            x=3
+            ## File path
 
-            
-            mdm = MarvelousDesignerModule()
-            ## Enable drapping
-            mdm.SimulationOn(1)
-            # Load the garments
-            mdm.LoadZmdrFileWithZblc(ModularConfigurator.currentZMDRFile, ModularConfigurator.zBlocksToSimulate)
-            # Call for the high quality render
-            mdm.ExportRenderingImage("I:\\" + filename + ".png")
+
+            ## Create a filename from the block set combined with the garment name
+            renderImageFilename = ModularConfigurator.activeGarment + '_' + '-'.join(blockSet)
+
+            ModularConfigurator.zBlocksToSimulate = []
+
+            for block in blockSet:
+                blockFilename = block + ".zblc"
+                ModularConfigurator.zBlocksToSimulate.append(blockFilepath + blockFilename)
+
+            ModularConfigurator.scriptToOutput += """
+        # Load the garments
+        mdm.LoadZmdrFileWithZblc(\"C:\\Users\Public\Documents\CLO\Assets\Blocks\Man\Polos\\""" + ModularConfigurator.currentZMDRFile + """\", [\"""" + '", "'.join(ModularConfigurator.zBlocksToSimulate) + """\"])
+            """
+            ModularConfigurator.scriptToOutput += """
+        # Call for the high quality render
+        mdm.ExportRenderingImage('I:\\""" + renderImageFilename + """.png')
+            """
 
             ModularConfigurator.countOfSimulations = ModularConfigurator.countOfSimulations + 1
 
@@ -202,6 +228,7 @@ class ModularConfigurator:
         ]
         return listOfGarmentTypes.index(garmentName)
 
+    ## Build simulations right from here
     @staticmethod
     def parseFolderConfig(configFilePath):
         import configparser
@@ -209,48 +236,51 @@ class ModularConfigurator:
         config.read(configFilePath)
 
         ## The garment subtypes (Double & Single)
-        garmentSubTypes = config['Activate_Configurator_Info']['None\Activate_List'].lower().split(', ')
-
-        ## Make a master data structure, nested tree-like structure of garment types and their block categories.
-        garmentTypesAndBlockCategories = {}
+        garmentSubTypes = config['Activate_Configurator_Info']['None\Activate_List'].split(', ')
 
         for garmentSubType in garmentSubTypes:
-            ## Number of blocks for the garment subtype
+            ## Categories within the subType, Body Collar sleeves
             blockCategories = []
-            for key in config['Activate_Configurator_Info']:
+
+            ## Lists of all blocks to make simulations of
+            listOfBlockListsToSimulate = []
+
+            for key in config['Block_List_For_Modular']:
                 # if "jacket.double" is in "none\jacket.double\body_back\activate_list"
-                if (garmentSubType in key):
-                    ## Extract only the block category name (body back, body front, sleeves)
-                    blockCategory = key.replace("none", "")
-                    blockCategory = blockCategory.replace(garmentSubType, "")
-                    blockCategory = blockCategory.replace("activate_list", "")
-                    blockCategory = blockCategory.replace("\\", "")
+                if garmentSubType.lower() in key:
 
-                    blocksString = config['Activate_Configurator_Info'][key]
-                    blocksString = blocksString.replace('.zblc', '')
+                    blocks = config['Block_List_For_Modular'][key]
+                    blocksList = blocks.split(", ")
+                    listOfBlockListsToSimulate.append(blocksList)
 
-                    blocks = blocksString.split(", ")
+            listOfBlockListsToSimulate
+            blockCombos = list(product(*listOfBlockListsToSimulate))
+            x=3
+            for blockCombo in blockCombos:
+                renderImageFilename = '-'.join(ModularConfigurator.folders)
+                renderImageFilename = renderImageFilename + '__' + '--'.join(blockCombo)
+                # Remove slashes
+                renderImageFilename = renderImageFilename.replace("\\", '')
+                # Remove the file extensions from the individaul block names
+                renderImageFilename = renderImageFilename.replace(".zblc", '')
 
-                    # Prettyify the block names
-                    i = 0
-                    for block in blocks:
-                        try:
-                            blocks[i] = block.split('.')[1]
-                        except IndexError:
-                            x = 3
-                        i += 1
+                ## Build the simulation commands
+                print('Adding to scriptOutput')
+                print(blockCombo)
 
-                    blocksInCategory = {}
+                ## Prepend the block path to the blocks
+                blockComboAndPath = []
+                for block in blockCombo:
+                    blockComboAndPath.append(ModularConfigurator.blockFilepath + '\\'.join(ModularConfigurator.folders) + block)
 
-                    blocksInCategory[blockCategory] = blocks
-
-                    blockCategory = blocksInCategory
-
-                    blockCategories.append(blockCategory)
-                    blockCategories = sorted(blockCategories, key=ModularConfigurator.sortGarmentsLikeClo)
-            garmentTypesAndBlockCategories[garmentSubType] = blockCategories
-
-        return garmentTypesAndBlockCategories
+                ModularConfigurator.scriptToOutput += """
+       # Load the garments
+       mdm.LoadZmdrFileWithZblc(\"""" + ModularConfigurator.blockFilepath + '\\'.join(ModularConfigurator.folders) + '\\' + garmentSubType + """.zmdr", [\"""" + '", "'.join(
+    blockComboAndPath) + """\"])"""
+                ModularConfigurator.scriptToOutput += """
+       # Call for the high quality render
+       mdm.ExportRenderingImage('I:\\""" + renderImageFilename + """.png')
+                           """
 
     ## The individual folder process of working with the filesystem
     @staticmethod
@@ -259,6 +289,8 @@ class ModularConfigurator:
         directoriesInPath = folderPath.split('/')
         currentFolderName = directoriesInPath[-1]
 
+        ModularConfigurator.folders.append(currentFolderName + "\\")
+        x=3
         # Special Folders to omit
         foldersToOmit = "Assets/Blocks/Folded Shirt"
 
@@ -278,7 +310,7 @@ class ModularConfigurator:
                 ## Is it a config file (.conf)
                 if ".conf" in filePath:
                     ## Get block information fron the config file, such as how many blocks are in each category.
-                    listOfDirectories = ModularConfigurator.parseFolderConfig(filePath)
+                    ModularConfigurator.parseFolderConfig(filePath)
 
             else:
                 folderPath = filePath
@@ -292,10 +324,11 @@ class ModularConfigurator:
                     x = 3
                 else:
                     # If this is not an omitted folder, explore it
-                    subfolders = ModularConfigurator.exploreBlockFolder(folderPath)
+                    ModularConfigurator.exploreBlockFolder(folderPath)
 
                 listOfDirectories[nameOfFolder] = subfolders
 
+        ModularConfigurator.folders.pop()
         return listOfDirectories
 
     ## extract information about the blocks from the filesystem, before we interact with the CLO UI
@@ -304,8 +337,11 @@ class ModularConfigurator:
         # Modular configurator stores the blocks on the filesystem. Reading from the filesystem has advantages
         # ... to reading from the screen via OCR.
         pathToBlocks = '/Users/Skyward/Documents/clo/Assets/Blocks'
+
+        ModularConfigurator.folders = []
+
         ## Save this in the master list of blocks
-        ModularConfigurator.blocks = ModularConfigurator.exploreBlockFolder(pathToBlocks)
+        ModularConfigurator.exploreBlockFolder(pathToBlocks)
 
     # Iterate through all the garment folders
     @staticmethod

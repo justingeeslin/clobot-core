@@ -1,12 +1,23 @@
-from clobot import CLOBot
-from itertools import product
+from ModularConfigurator import ModularConfigurator
 
 if __name__ == '__main__':
+    ## Build a list of simulations using blocks from the filesystem
+    ModularConfigurator.getBlocksFromFilesystem()
 
-    #tree = {'collar1' : [{'front1' : ['back1', 'back2']}, 'front2', 'front3'] }
+    imports = """
+from PythonQt import QtCore, QtGui, MarvelousDesignerAPI
+from PythonQt.MarvelousDesignerAPI import *
+import MarvelousDesigner
+from MarvelousDesigner import *
+           """
+    classBeginning = """
+class CLOBotInstructions():
+    @staticmethod
+    def run():
+    """
+    ## Write the script to a python file
+    f = open("instructions.py", "w")
+    f.write(imports + classBeginning + ModularConfigurator.scriptToOutput)
+    f.close()
 
-    # l1, l2, l3 = ['collar1','collar2','collar3'], ['front1', 'front2'], ['back1', 'back2']
-    # output = list(product(l1, l2, l3))
-    # x=3
-
-    CLOBot.simulateAllModularBlocks()
+    # CLOBot.simulateAllModularBlocks()
