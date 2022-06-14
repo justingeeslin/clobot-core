@@ -18,6 +18,8 @@ class ModularConfigurator:
 
     countOfSimulations = 0
 
+    isHighQualityRender = True
+
     # Might Vary
     ## Might get the position of the modular configurator panel then move from there.
     blockFolderStartingPoint = [275, 192]
@@ -53,7 +55,10 @@ class ModularConfigurator:
     ## List of Folders, stack kept during traversal
     folders = []
 
+    ## Windows
     blockFilepath = "C:\\\\Users\Public\Documents\CLO\Assets\\"
+    ## Mac
+    # blockFilepath = "/Users/Skyward/Documents/clo/Assets/"
 
     ## A simulation script that can be run inside of CLO
     scriptToOutput = """
@@ -161,12 +166,20 @@ class ModularConfigurator:
 
             ModularConfigurator.scriptToOutput += """
         # Load the garments
-        mdm.LoadZmdrFileWithZblc(\"C:\\Users\Public\Documents\CLO\Assets\Blocks\Man\Polos\\""" + ModularConfigurator.currentZMDRFile + """\", [\"""" + '", "'.join(ModularConfigurator.zBlocksToSimulate) + """\"])
+        mdm.LoadZmdrFileWithZblc(\"""" + ModularConfigurator.currentZMDRFile + """\", [\"""" + '", "'.join(ModularConfigurator.zBlocksToSimulate) + """\"])
             """
-            ModularConfigurator.scriptToOutput += """
+            x=3
+            if ModularConfigurator.isHighQualityRender:
+                ModularConfigurator.scriptToOutput += """
         # Call for the high quality render
         mdm.ExportRenderingImage('I:\\""" + renderImageFilename + """.png')
-            """
+                """
+            else:
+                ModularConfigurator.scriptToOutput += """
+        # 3dsnapshot
+        mdm.ExportSnapshot3D('I:\\""" + renderImageFilename + """.png')
+                   """
+
 
             ModularConfigurator.countOfSimulations = ModularConfigurator.countOfSimulations + 1
 
@@ -257,7 +270,9 @@ class ModularConfigurator:
             blockCombos = list(product(*listOfBlockListsToSimulate))
             x=3
             for blockCombo in blockCombos:
+
                 renderImageFilename = '-'.join(ModularConfigurator.folders)
+                renderImageFilename = renderImageFilename.replace(ModularConfigurator.blockFilepath, '')
                 renderImageFilename = renderImageFilename + '__' + '--'.join(blockCombo)
                 # Remove slashes
                 renderImageFilename = renderImageFilename.replace("\\", '')
@@ -271,16 +286,24 @@ class ModularConfigurator:
                 ## Prepend the block path to the blocks
                 blockComboAndPath = []
                 for block in blockCombo:
-                    blockComboAndPath.append(ModularConfigurator.blockFilepath + '\\'.join(ModularConfigurator.folders) + block)
+                    blockComboAndPath.append('\\'.join(ModularConfigurator.folders) + block)
 
                 ModularConfigurator.scriptToOutput += """
        # Load the garments
-       mdm.LoadZmdrFileWithZblc(\"""" + ModularConfigurator.blockFilepath + '\\'.join(ModularConfigurator.folders) + '\\' + garmentSubType + """.zmdr", [\"""" + '", "'.join(
+       mdm.LoadZmdrFileWithZblc(\"""" + '\\'.join(ModularConfigurator.folders) + '\\' + garmentSubType + """.zmdr", [\"""" + '", "'.join(
     blockComboAndPath) + """\"])"""
-                ModularConfigurator.scriptToOutput += """
+
+                if ModularConfigurator.isHighQualityRender:
+                    ModularConfigurator.scriptToOutput += """
        # Call for the high quality render
-       mdm.ExportRenderingImage('I:\\""" + renderImageFilename + """.png')
+       mdm.ExportRenderingImage('Y:\\""" + renderImageFilename + """.png')
+                   """
+                else:
+                    ModularConfigurator.scriptToOutput += """
+        # 3dsnapshot
+        mdm.ExportSnapshot3D('Y:\\""" + renderImageFilename + """.png')
                            """
+
 
     ## The individual folder process of working with the filesystem
     @staticmethod
@@ -334,14 +357,10 @@ class ModularConfigurator:
     ## extract information about the blocks from the filesystem, before we interact with the CLO UI
     @staticmethod
     def getBlocksFromFilesystem():
-        # Modular configurator stores the blocks on the filesystem. Reading from the filesystem has advantages
-        # ... to reading from the screen via OCR.
-        pathToBlocks = '/Users/Skyward/Documents/clo/Assets/Blocks'
-
         ModularConfigurator.folders = []
 
         ## Save this in the master list of blocks
-        ModularConfigurator.exploreBlockFolder(pathToBlocks)
+        ModularConfigurator.exploreBlockFolder(ModularConfigurator.blockFilepath + "\\Blocks\\Woman\\Polos")
 
     # Iterate through all the garment folders
     @staticmethod
