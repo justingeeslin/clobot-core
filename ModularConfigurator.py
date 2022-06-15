@@ -289,19 +289,19 @@ class ModularConfigurator:
                     blockComboAndPath.append('\\'.join(ModularConfigurator.folders) + block)
 
                 ModularConfigurator.scriptToOutput += """
-       # Load the garments
-       mdm.LoadZmdrFileWithZblc(\"""" + '\\'.join(ModularConfigurator.folders) + '\\' + garmentSubType + """.zmdr", [\"""" + '", "'.join(
+        # Load the garments
+        mdm.LoadZmdrFileWithZblc(\"""" + '\\'.join(ModularConfigurator.folders) + '\\' + garmentSubType + """.zmdr", [\"""" + '", "'.join(
     blockComboAndPath) + """\"])"""
 
                 if ModularConfigurator.isHighQualityRender:
                     ModularConfigurator.scriptToOutput += """
-       # Call for the high quality render
-       mdm.ExportRenderingImage('Y:\\""" + renderImageFilename + """.png')
+        # Call for the high quality render
+        mdm.ExportRenderingImage('Y:\\""" + renderImageFilename + """.png')
                    """
                 else:
                     ModularConfigurator.scriptToOutput += """
-        # 3dsnapshot
-        mdm.ExportSnapshot3D('Y:\\""" + renderImageFilename + """.png')
+         # 3dsnapshot
+         mdm.ExportSnapshot3D('Y:\\""" + renderImageFilename + """.png')
                            """
 
 
