@@ -279,6 +279,12 @@ class ModularConfigurator:
                 # Remove the file extensions from the individaul block names
                 renderImageFilename = renderImageFilename.replace(".zblc", '')
 
+                ##
+                blockPath = ModularConfigurator.folders
+                if len(blockPath) > 1:
+                    ## Remove the path from C: to the blocks
+                    del blockPath[0]
+
                 ## Build the simulation commands
                 print('Adding to scriptOutput')
                 print(blockCombo)
@@ -286,11 +292,11 @@ class ModularConfigurator:
                 ## Prepend the block path to the blocks
                 blockComboAndPath = []
                 for block in blockCombo:
-                    blockComboAndPath.append('\\'.join(ModularConfigurator.folders) + block)
+                    blockComboAndPath.append('\\'.join(blockPath) + block)
 
                 ModularConfigurator.scriptToOutput += """
         # Load the garments
-        mdm.LoadZmdrFileWithZblc(\"""" + '\\'.join(ModularConfigurator.folders) + '\\' + garmentSubType + """.zmdr", [\"""" + '", "'.join(
+        mdm.LoadZmdrFileWithZblc(\"""" + '\\'.join(blockPath) + '\\' + garmentSubType + """.zmdr", [\"""" + '", "'.join(
     blockComboAndPath) + """\"])"""
 
                 if ModularConfigurator.isHighQualityRender:
@@ -351,7 +357,8 @@ class ModularConfigurator:
 
                 listOfDirectories[nameOfFolder] = subfolders
 
-        ModularConfigurator.folders.pop()
+        if len(ModularConfigurator.folders) > 0:
+            ModularConfigurator.folders.pop()
         return listOfDirectories
 
     ## extract information about the blocks from the filesystem, before we interact with the CLO UI
