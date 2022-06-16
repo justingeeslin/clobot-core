@@ -60,12 +60,15 @@ class ModularConfigurator:
     ## Mac
     # blockFilepath = "/Users/Skyward/Documents/clo/Assets/"
 
-    ## A simulation script that can be run inside of CLO
-    scriptToOutput = """
+    ## A simulation script that can be run inside of CLO - Creates Garments zpac files
+    garmentCreationScriptToOutput = """
         mdm = MarvelousDesignerModule()
         ## Enable drapping
         mdm.SimulationOn(1)
         """
+
+    ## A simulation script that can be run inside of CLO - Creates Projects and images from garments
+    projectCreationScriptToOutput = """"""
 
     def __init__(self):
         self.data = []
@@ -294,21 +297,22 @@ class ModularConfigurator:
                 for block in blockCombo:
                     blockComboAndPath.append('\\'.join(blockPath) + block)
 
-                ModularConfigurator.scriptToOutput += """
+                ModularConfigurator.garmentCreationScriptToOutput += """
         # Load the garments
         mdm.LoadZmdrFileWithZblc(\"""" + '\\'.join(blockPath) + '\\' + garmentSubType + """.zmdr", [\"""" + '", "'.join(
     blockComboAndPath) + """\"])"""
 
-                if ModularConfigurator.isHighQualityRender:
-                    ModularConfigurator.scriptToOutput += """
-        # Call for the high quality render
-        mdm.ExportRenderingImage('Y:\\""" + renderImageFilename + """.png')
+                ModularConfigurator.garmentCreationScriptToOutput += """
+        # Create the Garment file
+        mdm.ExportZPac('Y:\\""" + renderImageFilename + """.zpac')
                    """
-                else:
-                    ModularConfigurator.scriptToOutput += """
-         # 3dsnapshot
-         mdm.ExportSnapshot3D('Y:\\""" + renderImageFilename + """.png')
-                           """
+
+                ModularConfigurator.projectCreationScriptToOutput += """
+        #next multi process
+        object.set_garment_file_path('Y:\\""" + renderImageFilename + """.zpac')
+        object.sync_file_lists("animation")
+                """
+
 
 
     ## The individual folder process of working with the filesystem
@@ -369,7 +373,7 @@ class ModularConfigurator:
         ## Save this in the master list of blocks
         # ModularConfigurator.exploreBlockFolder(ModularConfigurator.blockFilepath + "\\Blocks")
         ### Test on a small folder
-        ModularConfigurator.exploreBlockFolder(ModularConfigurator.blockFilepath + "\\Blocks\\Woman\\Shirts")
+        ModularConfigurator.exploreBlockFolder(ModularConfigurator.blockFilepath + "\\Blocks\\Woman\\Polos")
 
     # Iterate through all the garment folders
     @staticmethod
