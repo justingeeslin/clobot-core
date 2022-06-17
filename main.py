@@ -14,6 +14,11 @@ from MarvelousDesigner import *
 class CLOBot():
 
     @staticmethod
+    def go(object):
+        CLOBot.createGarmentsFromBlocks()
+        CLOBot.createProjectsAndImagesFromGarments(object)
+
+    @staticmethod
     def createGarmentsFromBlocks():
 """ + ModularConfigurator.garmentCreationScriptToOutput + """
 
