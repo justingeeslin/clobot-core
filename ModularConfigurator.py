@@ -279,8 +279,11 @@ class ModularConfigurator:
                 renderImageFilename = renderImageFilename + '__' + '--'.join(blockCombo)
                 # Remove slashes
                 renderImageFilename = renderImageFilename.replace("\\", '')
+                renderImageFilename = garmentSubType + '__' + renderImageFilename
                 # Remove the file extensions from the individaul block names
                 renderImageFilename = renderImageFilename.replace(".zblc", '')
+                # Remove dots since these are not allowed in folder names
+                renderImageFilename = renderImageFilename.replace(".", '_')
 
                 ##
                 blockPath = ModularConfigurator.folders
