@@ -60,6 +60,9 @@ class ModularConfigurator:
     ## Mac
     # blockFilepath = "/Users/Skyward/Documents/clo/Assets/"
 
+    # exportFilepath = "Y:\\\\"
+    exportFilepath = "I:\\\\My Drive\CLOBot Creations\\"
+    # exportFilepath = "V:\\\\"
     ## A simulation script that can be run inside of CLO - Creates Garments zpac files
     garmentCreationScriptToOutput = """
         mdm = MarvelousDesignerModule()
@@ -307,12 +310,12 @@ class ModularConfigurator:
 
                 ModularConfigurator.garmentCreationScriptToOutput += """
         # Create the Garment file
-        mdm.ExportZPac('Y:\\""" + renderImageFilename + """.zpac')
+        mdm.ExportZPac('""" + ModularConfigurator.exportFilepath +  renderImageFilename + """.zpac')
                    """
 
                 ModularConfigurator.projectCreationScriptToOutput += """
         #next multi process
-        object.set_garment_file_path('Y:\\""" + renderImageFilename + """.zpac')
+        object.set_garment_file_path('""" + ModularConfigurator.exportFilepath + renderImageFilename + """.zpac')
         object.sync_file_lists("animation")
                 """
 
