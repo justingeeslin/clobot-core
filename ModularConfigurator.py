@@ -60,12 +60,18 @@ class ModularConfigurator:
     ## Mac
     # blockFilepath = "/Users/Skyward/Documents/clo/Assets/"
 
-    ## A simulation script that can be run inside of CLO
-    scriptToOutput = """
+    # exportFilepath = "Y:\\\\"
+    exportFilepath = "I:\\\\My Drive\CLOBot Creations\\"
+    # exportFilepath = "V:\\\\"
+    ## A simulation script that can be run inside of CLO - Creates Garments zpac files
+    garmentCreationScriptToOutput = """
         mdm = MarvelousDesignerModule()
         ## Enable drapping
         mdm.SimulationOn(1)
         """
+
+    ## A simulation script that can be run inside of CLO - Creates Projects and images from garments
+    projectCreationScriptToOutput = """"""
 
     def __init__(self):
         self.data = []
@@ -276,8 +282,11 @@ class ModularConfigurator:
                 renderImageFilename = renderImageFilename + '__' + '--'.join(blockCombo)
                 # Remove slashes
                 renderImageFilename = renderImageFilename.replace("\\", '')
+                renderImageFilename = garmentSubType + '__' + renderImageFilename
                 # Remove the file extensions from the individaul block names
                 renderImageFilename = renderImageFilename.replace(".zblc", '')
+                # Remove dots since these are not allowed in folder names
+                renderImageFilename = renderImageFilename.replace(".", '_')
 
                 ##
                 blockPath = ModularConfigurator.folders
@@ -294,21 +303,22 @@ class ModularConfigurator:
                 for block in blockCombo:
                     blockComboAndPath.append('\\'.join(blockPath) + block)
 
-                ModularConfigurator.scriptToOutput += """
+                ModularConfigurator.garmentCreationScriptToOutput += """
         # Load the garments
         mdm.LoadZmdrFileWithZblc(\"""" + '\\'.join(blockPath) + '\\' + garmentSubType + """.zmdr", [\"""" + '", "'.join(
     blockComboAndPath) + """\"])"""
 
-                if ModularConfigurator.isHighQualityRender:
-                    ModularConfigurator.scriptToOutput += """
-        # Call for the high quality render
-        mdm.ExportRenderingImage('Y:\\""" + renderImageFilename + """.png')
+                ModularConfigurator.garmentCreationScriptToOutput += """
+        # Create the Garment file
+        mdm.ExportZPac('""" + ModularConfigurator.exportFilepath +  renderImageFilename + """.zpac')
                    """
-                else:
-                    ModularConfigurator.scriptToOutput += """
-         # 3dsnapshot
-         mdm.ExportSnapshot3D('Y:\\""" + renderImageFilename + """.png')
-                           """
+
+                ModularConfigurator.projectCreationScriptToOutput += """
+        #next multi process
+        object.set_garment_file_path('""" + ModularConfigurator.exportFilepath + renderImageFilename + """.zpac')
+        object.sync_file_lists("animation")
+                """
+
 
 
     ## The individual folder process of working with the filesystem
@@ -369,7 +379,7 @@ class ModularConfigurator:
         ## Save this in the master list of blocks
         # ModularConfigurator.exploreBlockFolder(ModularConfigurator.blockFilepath + "\\Blocks")
         ### Test on a small folder
-        ModularConfigurator.exploreBlockFolder(ModularConfigurator.blockFilepath + "\\Blocks\\Woman\\Shirts")
+        ModularConfigurator.exploreBlockFolder(ModularConfigurator.blockFilepath + "\\Blocks\\Woman\\Polos")
 
     # Iterate through all the garment folders
     @staticmethod
