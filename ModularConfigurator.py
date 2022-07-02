@@ -373,13 +373,14 @@ class ModularConfigurator:
 
     ## extract information about the blocks from the filesystem, before we interact with the CLO UI
     @staticmethod
-    def getBlocksFromFilesystem():
+    def getBlocksFromFilesystem(blockPaths):
         ModularConfigurator.folders = []
 
         ## Save this in the master list of blocks
         # ModularConfigurator.exploreBlockFolder(ModularConfigurator.blockFilepath + "\\Blocks")
-        ### Test on a small folder
-        ModularConfigurator.exploreBlockFolder(ModularConfigurator.blockFilepath + "\\Blocks\\Woman\\Polos")
+
+        for blockPath in blockPaths:
+            ModularConfigurator.exploreBlockFolder(ModularConfigurator.blockFilepath + "\\Blocks\\" + blockPath)
 
     # Iterate through all the garment folders
     @staticmethod

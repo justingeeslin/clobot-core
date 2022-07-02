@@ -1,16 +1,25 @@
+import sys
 from ModularConfigurator import ModularConfigurator
 
 if __name__ == '__main__':
+    blockPaths = [
+        # 'Woman\\T-Shirts',
+        # 'Woman\\Trench Coats'
+    ];
+    ## Woman\\T-Shirts,Woman\\Trench Coats
+    if len(sys.argv) > 0:
+        blockPaths = sys.argv[1].split(',')
+
     ## Build a list of simulations using blocks from the filesystem
-    ModularConfigurator.getBlocksFromFilesystem()
+
+    ModularConfigurator.getBlocksFromFilesystem(blockPaths)
 
     imports = """
 from PythonQt import QtCore, QtGui, MarvelousDesignerAPI
 from PythonQt.MarvelousDesignerAPI import *
 import MarvelousDesigner
 from MarvelousDesigner import *
-           """
-    classScript = """
+           """    classScript = """
 class CLOBot():
 
     @staticmethod
