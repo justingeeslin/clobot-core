@@ -61,7 +61,10 @@ class ModularConfigurator:
     # blockFilepath = "/Users/Skyward/Documents/clo/Assets/"
 
     # exportFilepath = "Y:\\\\"
-    exportFilepath = "I:\\\\My Drive\CLOBot Creations\\"
+    # Citrix
+    exportFilepath = "I:\\\\My Drive\CLOBot Creations\\\\"
+    # VM
+    exportFilepath = "G:\\\\My Drive\CLOBot Creations\\\\"
     # exportFilepath = "V:\\\\"
     ## A simulation script that can be run inside of CLO - Creates Garments zpac files
     garmentCreationScriptToOutput = """

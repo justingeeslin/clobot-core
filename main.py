@@ -19,7 +19,8 @@ from PythonQt import QtCore, QtGui, MarvelousDesignerAPI
 from PythonQt.MarvelousDesignerAPI import *
 import MarvelousDesigner
 from MarvelousDesigner import *
-           """    classScript = """
+           """
+    classScript = """
 class CLOBot():
 
     @staticmethod
@@ -58,15 +59,15 @@ class CLOBot():
 
 """ + ModularConfigurator.projectCreationScriptToOutput + """
 
-        object.set_save_folder_path("Y:\\\\", "pdf")
-        # object.set_save_folder_path("Y:\\\\", "png")
+        object.set_save_folder_path('""" + ModularConfigurator.exportFilepath + """', "obj")
+        
         #set auto save option. True is save with Zprj File and Image File.
         object.set_auto_save(True)
         #call the "process" function (to autosave project file, change factor to ture)
         object.process()
     """
     ## Write the script to a python file
-    f = open("clobot3.py", "w")
+    f = open("C:\\Users\Public\Documents\CLO\Assets\clobot3.py", "w")
     f.write(imports + classScript)
     f.close()
 
