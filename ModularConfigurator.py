@@ -120,7 +120,7 @@ class ModularConfigurator:
         #
         #     x = 3
 
-    ## Individual action for the recursive process
+    ## Individual action for the recursive process - Unused
     @staticmethod
     def iterateThroughGarmentBlockRow(garmentTypesAndBlockCategories, rowIndex, colIndex):
         garmentRow = garmentTypesAndBlockCategories[rowIndex]
@@ -277,7 +277,11 @@ class ModularConfigurator:
 
             listOfBlockListsToSimulate
             blockCombos = list(product(*listOfBlockListsToSimulate))
-            x=3
+
+
+            ## Save the previous block combo and path for comparison
+            previousBlockComboAndPath = []
+
             for blockCombo in blockCombos:
 
                 renderImageFilename = '-'.join(ModularConfigurator.folders)
@@ -303,13 +307,25 @@ class ModularConfigurator:
 
                 ## Prepend the block path to the blocks
                 blockComboAndPath = []
+
                 for block in blockCombo:
                     blockComboAndPath.append('\\'.join(blockPath) + block)
 
-                ModularConfigurator.garmentCreationScriptToOutput += """
+                ## If this is not the first iteration..
+                if previousBlockComboAndPath != []:
+                    ## ..Take the difference between the previous and the current
+                    blockComboAndPathDifference = list(set(previousBlockComboAndPath) - set(blockComboAndPath))
+                else:
+                    blockComboAndPathDifference = blockComboAndPath
+
+                if len(blockComboAndPathDifference) > 1:
+                    ModularConfigurator.garmentCreationScriptToOutput += """
         # Load the garments
         mdm.LoadZmdrFileWithZblc(\"""" + '\\'.join(blockPath) + '\\' + garmentSubType + """.zmdr", [\"""" + '", "'.join(
-    blockComboAndPath) + """\"])"""
+    blockComboAndPathDifference) + """\"])"""
+                else:
+                    ModularConfigurator.garmentCreationScriptToOutput += """
+        mdm.LoadZblcFile(\"""" + '", "'.join(blockComboAndPathDifference) + """\", False, 0)"""
 
                 ModularConfigurator.garmentCreationScriptToOutput += """
         # Create the Garment file
@@ -321,6 +337,8 @@ class ModularConfigurator:
         object.set_garment_file_path('""" + ModularConfigurator.exportFilepath + renderImageFilename + """.zpac')
         object.sync_file_lists("animation")
                 """
+
+                previousBlockComboAndPath = blockComboAndPath
 
 
 
