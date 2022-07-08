@@ -56,7 +56,7 @@ class ModularConfigurator:
     folders = []
 
     ## Windows
-    blockFilepath = "C:\\\\Users\Public\Documents\CLO\Assets\\"
+    blockFilepath = "C:\\\\Users\Public\Documents\CLO\Assets\Blocks\\"
     ## Mac
     # blockFilepath = "/Users/Skyward/Documents/clo/Assets/"
 
@@ -383,7 +383,7 @@ class ModularConfigurator:
         # ModularConfigurator.exploreBlockFolder(ModularConfigurator.blockFilepath + "\\Blocks")
 
         for blockPath in blockPaths:
-            ModularConfigurator.exploreBlockFolder(ModularConfigurator.blockFilepath + "\\Blocks\\" + blockPath)
+            ModularConfigurator.exploreBlockFolder(ModularConfigurator.blockFilepath + blockPath)
 
     # Iterate through all the garment folders
     @staticmethod
