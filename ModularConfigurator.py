@@ -62,7 +62,7 @@ class ModularConfigurator:
 
     # exportFilepath = "Y:\\\\"
     # Citrix
-    exportFilepath = "I:\\\\My Drive\CLOBot Creations\\\\"
+    # exportFilepath = "I:\\\\CLOBot Creations\\\\"
     # VM
     exportFilepath = "G:\\\\My Drive\CLOBot Creations\\\\"
     # exportFilepath = "V:\\\\"
