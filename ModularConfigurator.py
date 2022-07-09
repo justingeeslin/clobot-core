@@ -58,13 +58,20 @@ class ModularConfigurator:
     ## Windows
     blockFilepath = "C:\\\\Users\Public\Documents\CLO\Assets\Blocks\\"
     ## Mac
+    # blockFilepath = "/Volumes/[C] WinDev2204Eval/Users/Public/Documents/CLO/Assets/Blocks/"
     # blockFilepath = "/Users/Skyward/Documents/clo/Assets/"
 
     # exportFilepath = "Y:\\\\"
+
     # Citrix
     # exportFilepath = "I:\\\\CLOBot Creations\\\\"
+
     # VM
     exportFilepath = "G:\\\\My Drive\CLOBot Creations\\\\"
+
+    # Mac
+    # exportFilepath = "~/CLOBot Creations/"
+
     # exportFilepath = "V:\\\\"
     ## A simulation script that can be run inside of CLO - Creates Garments zpac files
     garmentCreationScriptToOutput = """
@@ -293,9 +300,9 @@ class ModularConfigurator:
 
                 ##
                 blockPath = ModularConfigurator.folders
-                if len(blockPath) > 1:
-                    ## Remove the path from C: to the blocks
-                    del blockPath[0]
+                # if len(blockPath) > 1:
+                #     ## Remove the path from C: to the blocks
+                #     del blockPath[0]
 
                 ## Build the simulation commands
                 print('Adding to scriptOutput')
@@ -304,11 +311,11 @@ class ModularConfigurator:
                 ## Prepend the block path to the blocks
                 blockComboAndPath = []
                 for block in blockCombo:
-                    blockComboAndPath.append('\\'.join(blockPath) + block)
+                    blockComboAndPath.append(ModularConfigurator.blockFilepath + '\\'.join(blockPath) + block)
 
                 ModularConfigurator.garmentCreationScriptToOutput += """
         # Load the garments
-        mdm.LoadZmdrFileWithZblc(\"""" + '\\'.join(blockPath) + '\\' + garmentSubType + """.zmdr", [\"""" + '", "'.join(
+        mdm.LoadZmdrFileWithZblc(\"""" + ModularConfigurator.blockFilepath + '\\'.join(blockPath) + '\\' + garmentSubType + """.zmdr", [\"""" + '", "'.join(
     blockComboAndPath) + """\"])"""
 
                 ModularConfigurator.garmentCreationScriptToOutput += """
@@ -383,6 +390,14 @@ class ModularConfigurator:
         # ModularConfigurator.exploreBlockFolder(ModularConfigurator.blockFilepath + "\\Blocks")
 
         for blockPath in blockPaths:
+
+            blockPath
+
+            ## When passing directories in the parameter, be sure these get added to the list of folders. As if you traversed as far.
+            directories = blockPath.split('//')
+            directories.pop()
+            ModularConfigurator.folders = directories
+            x=3
             ModularConfigurator.exploreBlockFolder(ModularConfigurator.blockFilepath + blockPath)
 
     # Iterate through all the garment folders
