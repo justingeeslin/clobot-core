@@ -60,7 +60,10 @@ class CLOBot():
         # qulity = 1 Normal
         # qulity = 2 Custom
         object.set_simulation_quality(1)
-
+        
+        # Attempting to take the later frames of the simulation
+        object.set_simulation_options(0, 0, 10000)
+        
         # Load the avatar
         object.set_avatar_file_path("C:\\Users\\Public\\Documents\\CLO\\Assets\\Avatar\\Avatar\\Female_V2\\Avatar (Modular)\\Modular_FV2_Feifei.avt")
 
