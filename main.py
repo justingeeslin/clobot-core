@@ -2,6 +2,14 @@ import sys
 from ModularConfigurator import ModularConfigurator
 
 if __name__ == '__main__':
+
+    ## Establish whether in debug mode
+    isDebug = False
+    gettrace = getattr(sys, 'gettrace', None)
+    if gettrace():
+        isDebug = True
+
+
     blockPaths = [
         # 'Woman\\T-Shirts',
         # 'Woman\\Trench Coats'
@@ -9,7 +17,6 @@ if __name__ == '__main__':
     ## Woman\\T-Shirts,Woman\\Trench Coats
     if len(sys.argv) > 0:
         blockPaths = sys.argv[1].split(',')
-
     ## Build a list of simulations using blocks from the filesystem
 
     ModularConfigurator.getBlocksFromFilesystem(blockPaths)
@@ -67,7 +74,10 @@ class CLOBot():
         object.process()
     """
     ## Write the script to a python file
-    f = open("C:\\Users\Public\Documents\CLO\Assets\clobot3.py", "w")
+    if isDebug:
+        f = open("clobot3.py", "w")
+    else:
+        f = open("C:\\Users\Public\Documents\CLO\Assets\clobot3.py", "w")
     f.write(imports + classScript)
     f.close()
 
