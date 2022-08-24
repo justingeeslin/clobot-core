@@ -34,7 +34,8 @@ class CLOBot():
         # ])
         # mdm.ExportZPac('G:\\My Drive\\CLOBot Creations\\CustomBlocks-Dolman.zpac')
 
-    @staticmethod    def garmentsToProjects(object):
+    @staticmethod
+    def garmentsToProjects(object):
         ## From the garments (zpac) to Projects per avatar (unsimulated, and un-reset)
 
         garments = [
@@ -75,12 +76,27 @@ class CLOBot():
                 object.process()
 
     @staticmethod
-    def createProjectsAndImagesFromGarments(object):
+    def createResetGarmentsFromResetProjects(object):
         # Garments to Images & Projects
         mdm = MarvelousDesignerModule()    
 
+        ## Insert Reset projects
+        projects = [
+            # "CustomBlocks-BishopSleeves-ID_651.zprj",
+            "CustomBlocks-BishopSleeves (10).zprj"
+        ]
+
+        for project in projects:
+
+            mdm.ImportZprj("G:\My Drive\CLOBot Creations\\" + project, False)
+        
+            mdm.ExportZPac("G:\My Drive\CLOBot Creations\\Garment1 Unsimulated ID_651.zpac")
+
+    @staticmethod
+    def createSimulationsFromResetGarments(object):
+
         garments = [
-            "CustomBlocks-BishopSleeves.zpac"
+            "Garment1 Unsimulated ID_651.zpac"
         ]
 
         avatars = [
@@ -120,7 +136,5 @@ class CLOBot():
                 #set auto save option. True is save with Zprj File and Image File.
                 object.set_auto_save(True)
                 #call the "process" function (to autosave project file, change factor to ture)
-                object.process()
-
-                
+                object.process()            
     
