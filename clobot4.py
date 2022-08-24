@@ -16,11 +16,6 @@ class CLOBot():
     def createGarmentsFromBlocks(object):
 
         mdm = MarvelousDesignerModule()
-
-        ## Load an avatar
-        object.initialize()
-        object.set_avatar_file_path("C:\Users\Public\Documents\CLO\Assets\Avatar\Avatar\\Test651\ID_651.avt")
-        object.process()
         
         # Load the garments
         mdm.LoadZmdrFileWithZblc("G:\\Shared drives\\Wearable Technology Lab\\Projects\\Smart Wardrobe\\J. CloBot\\CustomBlocks\\3DResetBlocksBlocks\\Sweaters\\BishopSleeves\\Shirt.Basic.zmdr", [
@@ -30,17 +25,8 @@ class CLOBot():
             "G:\\Shared drives\\Wearable Technology Lab\\Projects\\Smart Wardrobe\\J. CloBot\\CustomBlocks\\3DResetBlocksBlocks\\Sweaters\\BishopSleeves\\Body_Back.zblc"
         ])
 
-        
         # Create the Garment file
         mdm.ExportZPac('G:\\My Drive\\CLOBot Creations\\CustomBlocks-BishopSleeves.zpac')
-
-        # time.sleep(15)
-
-        # ## Trigger a 3D reset = Triggers another process to send a shortcut key
-        # mdm.ExportZPac('G:\\My Drive\\CLOBot Creations\\semaphore.zpac')
-        # time.sleep(15)
-
-        # mdm.ExportZPac('G:\\My Drive\\CLOBot Creations\\CustomBlocks-BishopSleeves-ID_651.zpac')
 
         # mdm.LoadZmdrFileWithZblc("G:\\Shared drives\\Wearable Technology Lab\\Projects\\Smart Wardrobe\\J. CloBot\\CustomBlocks\\3DResetBlocksBlocks\\Sweaters\\dolman\\T-Shirt.Basic.zmdr", [
         #     "G:\\Shared drives\\Wearable Technology Lab\\Projects\\Smart Wardrobe\\J. CloBot\\CustomBlocks\\3DResetBlocksBlocks\\Sweaters\\dolman\\Sleeves.zblc", 
@@ -48,8 +34,7 @@ class CLOBot():
         # ])
         # mdm.ExportZPac('G:\\My Drive\\CLOBot Creations\\CustomBlocks-Dolman.zpac')
 
-    @staticmethod
-    def garmentsToProjects(object):
+    @staticmethod    def garmentsToProjects(object):
         ## From the garments (zpac) to Projects per avatar (unsimulated, and un-reset)
 
         garments = [
