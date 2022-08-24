@@ -48,8 +48,6 @@ class CLOBot():
         for avatar in avatars:
             for garment in garments:
 
-                 # clear console window
-                object.clear_console() 
                 #initialize object module
                 object.initialize()
 
@@ -91,9 +89,6 @@ class CLOBot():
 
         for avatar in avatars:
             for garment in garments:
-
-                 # clear console window
-                object.clear_console() 
                 #initialize object module
                 object.initialize()
 
