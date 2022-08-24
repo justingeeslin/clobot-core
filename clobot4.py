@@ -129,9 +129,6 @@ class CLOBot():
                 object.sync_file_lists("animation")
             
                 object.set_save_folder_path('G:\\My Drive\\CLOBot Creations\\', "obj")
-                
-                # ## Triggers another process to send a shortcut key
-                # mdm.ExportZPac('G:\\My Drive\\CLOBot Creations\\semaphore.zpac')
 
                 #set auto save option. True is save with Zprj File and Image File.
                 object.set_auto_save(True)
