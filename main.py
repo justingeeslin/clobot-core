@@ -10,16 +10,29 @@ if __name__ == '__main__':
         isDebug = True
 
 
-    blockPaths = [
-        # 'Woman\\T-Shirts',
-        # 'Woman\\Trench Coats'
-    ];
+    blockPath = "";
     ## Woman\\T-Shirts,Woman\\Trench Coats
-    if len(sys.argv) > 0:
-        blockPaths = sys.argv[1].split(',')
-    ## Build a list of simulations using blocks from the filesystem
+    hasSufficentArguments = True;
+    if len(sys.argv) > 1:
+        blockPath = sys.argv[1]
+    else:
+        print("Please supply the path for the blocks. Ex: C:\\\\Users\Public\Documents\CLO\Assets\Blocks\\")
+        hasSufficentArguments = False;
 
-    ModularConfigurator.getBlocksFromFilesystem(blockPaths)
+    outputPath = "";
+    if len(sys.argv) > 2:
+        outputPath = sys.argv[2]
+    else:
+        print("Please supply the output path i.e. where do you want to resutling Python script to go. . Ex: C:\\\\Users\Public\Documents\CLO\CLOBot\Scripts\\")
+        hasSufficentArguments = False;
+
+    if not hasSufficentArguments:
+        exit(1)
+
+    ModularConfigurator.blockFilepath = blockPath;
+    ModularConfigurator.exportFilepath = outputPath;
+    ## Build a list of simulations using blocks from the filesystem
+    ModularConfigurator.getBlocksFromFilesystem(blockPath)
 
     imports = """
 from PythonQt import QtCore, QtGui, MarvelousDesignerAPI
