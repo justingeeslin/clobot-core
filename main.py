@@ -26,10 +26,18 @@ if __name__ == '__main__':
         print("Please supply the output path i.e. where do you want to resutling Python script to go. . Ex: C:\\\\Users\Public\Documents\CLO\CLOBot\Scripts\\")
         hasSufficentArguments = False;
 
+    scriptFilePath = "";
+    if len(sys.argv) > 3:
+        scriptFilePath = sys.argv[3]
+    else:
+        print(
+            "Please supply the output path i.e. where do you want to resutling Python script to go. . Ex: C:\\\\Users\Public\Documents\CLO\CLOBot\Scripts\\")
+        hasSufficentArguments = False;
+
     if not hasSufficentArguments:
         exit(1)
 
     CLOModularBlocks.discoverBlockInformation(blockPath, outputPath)
 
-    CLOModularBlocks.scriptFilePath = "/Users/Skyward/Documents/clo/CLOBot/test-case.py"
+    CLOModularBlocks.scriptFilePath = scriptFilePath
     CLOModularBlocks.writePythonScript()
