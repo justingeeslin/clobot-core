@@ -1,6 +1,7 @@
 import os
 from itertools import product
 import pathlib
+from pathlib import Path
 
 class CLOModularBlocks:
     
@@ -16,7 +17,6 @@ class CLOModularBlocks:
         ## Enable drapping
         mdm.SimulationOn(1)
             """
-
     ## A simulation script that can be run inside of CLO - Creates Projects and images from garments
     projectCreationScriptToOutput = """"""
 
@@ -80,16 +80,15 @@ class CLOModularBlocks:
 
 
                 ## Build the simulation commands
-                print('Adding to scriptOutput')
-                print(blockCombo)
+                # print('Adding to scriptOutput')
+                # print(blockCombo)
 
                 ## Prepend the block path to the blocks
                 blockComboAndPath = []
                 for block in blockCombo:
                     blockComboAndPath.append(CLOModularBlocks.blockFilepath + block)
 
-                CLOModularBlocks.garmentCreationScriptToOutput += """
-        # Load the garments
+                CLOModularBlocks.garmentCreationScriptToOutput += """        # Load the garments
         mdm.LoadZmdrFileWithZblc(\"""" + "" + CLOModularBlocks.blockFilepath + garmentSubType + """.zmdr", [\"""" + '", "'.join(
             blockComboAndPath) + """\"])
                     """
@@ -172,5 +171,14 @@ class CLOBot():
 
         with open(CLOModularBlocks.scriptFilePath, "w") as f:
             f.write(scriptToExport)
+            print("CLO Python Script created successfully!")
+            print("From the CLO Python Script prompt copy and paste the following, one line at a time:")
+            # Add the CLOBot to the path
+            print("sys.path.append(\"" + os.path.dirname(CLOModularBlocks.scriptFilePath) + "\")")
+            # Import CLOBot
+            filename = Path(CLOModularBlocks.scriptFilePath).stem
+            print("from " + filename + " import CLOBot")
+            # Run the script
+            print("CLOBot.go(mdsa)")
 
         f.close()
