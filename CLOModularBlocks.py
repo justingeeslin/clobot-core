@@ -10,7 +10,7 @@ class CLOModularBlocks:
     exportFilepath = "C:\\\\Users\Public\Documents\CLO\CLOBot Creations\\\\"
 
     # The path and file name of the generated python script
-    scriptFilePath = "/Users/Skyward/Documents/clo/CLOBot/test-case.py"
+    scriptFilePath = "C:\\\\Users\Public\Documents\CLO\CLOBot Creations\\\\test-case.py"
 
     garmentCreationScriptToOutput = """
         mdm = MarvelousDesignerModule()
