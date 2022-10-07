@@ -17,6 +17,7 @@ class CLOModularBlocks:
         ## Enable drapping
         mdm.SimulationOn(1)
             """
+
     ## A simulation script that can be run inside of CLO - Creates Projects and images from garments
     projectCreationScriptToOutput = """"""
 
@@ -173,7 +174,7 @@ class CLOBot():
         with open(CLOModularBlocks.scriptFilePath, "w") as f:
             f.write(scriptToExport)
             print("CLO Python Script created successfully!")
-            print("From the CLO Python Script prompt copy and paste the following, one line at a time:")
+            print("From the CLO Python Script prompt, copy and paste the following, one line at a time:")
             # Add the CLOBot to the path
             print("sys.path.append(\"" + os.path.dirname(CLOModularBlocks.scriptFilePath) + "\")")
             # Import CLOBot
