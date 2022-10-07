@@ -88,7 +88,8 @@ class CLOModularBlocks:
                 for block in blockCombo:
                     blockComboAndPath.append(CLOModularBlocks.blockFilepath + block)
 
-                CLOModularBlocks.garmentCreationScriptToOutput += """        # Load the garments
+                CLOModularBlocks.garmentCreationScriptToOutput += """
+        # Load the garments
         mdm.LoadZmdrFileWithZblc(\"""" + "" + CLOModularBlocks.blockFilepath + garmentSubType + """.zmdr", [\"""" + '", "'.join(
             blockComboAndPath) + """\"])
                     """
