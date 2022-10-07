@@ -9,22 +9,22 @@ class TestCaseBase(unittest.TestCase):
 
 class MyTestCase(TestCaseBase):
     def test_discoverBlockInformation(self):
-        blockFilePath = "/Users/Skyward/Documents/clo/Assets/Blocks/Man/Polos/"
-        exportFilePath = "/Users/Skyward/Documents/clo/CLOBot/"
+        blockFilePath = r"C:\Users\Public\Documents\CLO\Assets\Blocks\Man\Polos"
+        exportFilePath = r"C:\Users\Public\Documents\CLO\clobot"
         CLOModularBlocks.discoverBlockInformation(blockFilePath, exportFilePath)
 
         ## Expect that the config file was discovered correctly
-        self.assertEqual(CLOModularBlocks.blockConfigFilePath, "/Users/Skyward/Documents/clo/Assets/Blocks/Man/Polos/Polos.conf")
+        self.assertEqual(CLOModularBlocks.blockConfigFilePath, r"C:\Users\Public\Documents\CLO\Assets\Blocks\Man\Polos\Polos.conf")
 
         ## Expect that the file paths from ZMDR are correct
-        self.assertIn(blockFilePath + "Polo.Dropped.zmdr", CLOModularBlocks.garmentCreationScriptToOutput)
+        self.assertIn(blockFilePath + r"\Polo.Dropped.zmdr", CLOModularBlocks.garmentCreationScriptToOutput)
 
     def test_writePythonScript(self):
-        blockFilePath = "/Users/Skyward/Documents/clo/Assets/Blocks/Man/Polos/"
-        exportFilePath = "/Users/Skyward/Documents/clo/CLOBot/"
+        blockFilePath = r"C:\Users\Public\Documents\CLO\Assets\Blocks\Man\Polos"
+        exportFilePath = r"C:\Users\Public\Documents\CLO\clobot"
         CLOModularBlocks.discoverBlockInformation(blockFilePath, exportFilePath)
 
-        CLOModularBlocks.scriptFilePath = "/Users/Skyward/Documents/clo/CLOBot/test-case.py"
+        CLOModularBlocks.scriptFilePath = r"C:\Users\Public\Documents\CLO\clobot\test-case.py"
         CLOModularBlocks.writePythonScript()
 
         path = pl.Path(CLOModularBlocks.scriptFilePath)

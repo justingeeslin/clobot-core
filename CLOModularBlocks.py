@@ -5,12 +5,12 @@ from pathlib import Path
 
 class CLOModularBlocks:
     
-    blockFilepath = "C:\\\\Users\Public\Documents\CLO\Assets\Blocks\\"
+    blockFilepath = "C:\\Users\\Public\\Documents\\CLO\\Assets\\Blocks\\Man\\Polos"
     blockConfigFilePath = ""
-    exportFilepath = "C:\\\\Users\Public\Documents\CLO\CLOBot Creations\\\\"
+    exportFilepath = "C:\\Users\\Public\\Documents\\CLO\\clobot"
 
     # The path and file name of the generated python script
-    scriptFilePath = "C:\\\\Users\Public\Documents\CLO\CLOBot Creations\\\\test-case.py"
+    scriptFilePath = "C:\\Users\\Public\\Documents\\CLO\\clobot\\test-case.py"
 
     garmentCreationScriptToOutput = """
         mdm = MarvelousDesignerModule()
@@ -91,18 +91,18 @@ class CLOModularBlocks:
 
                 CLOModularBlocks.garmentCreationScriptToOutput += """
         # Load the garments
-        mdm.LoadZmdrFileWithZblc(\"""" + "" + CLOModularBlocks.blockFilepath + garmentSubType + """.zmdr", [\"""" + '", "'.join(
+        mdm.LoadZmdrFileWithZblc(r\"""" + "" + CLOModularBlocks.blockFilepath + "\\" + garmentSubType + """.zmdr", [r\"""" + '", r"'.join(
             blockComboAndPath) + """\"])
                     """
 
                 CLOModularBlocks.garmentCreationScriptToOutput += """
         # Create the Garment file
-        mdm.ExportZPac('""" + CLOModularBlocks.exportFilepath + renderImageFilename + """.zpac')
+        mdm.ExportZPac(r'""" + CLOModularBlocks.exportFilepath + "\\" + renderImageFilename + """.zpac')
                            """
 
                 CLOModularBlocks.projectCreationScriptToOutput += """
         #next multi process
-        object.set_garment_file_path('""" + CLOModularBlocks.exportFilepath + renderImageFilename + """.zpac')
+        object.set_garment_file_path(r'""" + CLOModularBlocks.exportFilepath + "\\" + renderImageFilename + """.zpac')
         object.sync_file_lists("animation")
                         """
 
