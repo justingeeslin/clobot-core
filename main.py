@@ -34,7 +34,8 @@ if __name__ == '__main__':
         hasSufficentArguments = False;
 
     if not hasSufficentArguments:
-        exit(1)
+        sys.exit(1)
+
 
     CLOModularBlocks.discoverBlockInformation(blockPath, outputPath)
 
