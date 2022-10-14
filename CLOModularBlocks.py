@@ -2,6 +2,7 @@ import os
 from itertools import product
 import pathlib
 from pathlib import Path
+import sys
 
 class CLOModularBlocks:
     
@@ -38,6 +39,8 @@ class CLOModularBlocks:
         files = os.listdir(CLOModularBlocks.blockFilepath)
         sortedFiles = sorted(files)
         for file in sortedFiles:
+            # Show progress..
+            print('.')
             filePath = os.path.join(CLOModularBlocks.blockFilepath, file)
             # If it is a file
             if os.path.isfile(filePath):
@@ -47,7 +50,11 @@ class CLOModularBlocks:
                     config.read(CLOModularBlocks.blockConfigFilePath)
 
         ## The garment subtypes (Double & Single)
-        garmentSubTypes = config['Activate_Configurator_Info']['None\Activate_List'].split(', ')
+        try:
+            garmentSubTypes = config['Activate_Configurator_Info']['None\Activate_List'].split(', ')
+        except KeyError:
+            print('Could not find block information within this folder. Is there a configuration file (.conf) in this folder?')
+            sys.exit(-1)
 
         for garmentSubType in garmentSubTypes:
             ## Categories within the subType, Body Collar sleeves
