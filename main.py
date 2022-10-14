@@ -16,22 +16,21 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         blockPath = sys.argv[1]
     else:
-        print("Please supply the path for the blocks. Ex: C:\\\\Users\Public\Documents\CLO\Assets\Blocks\\")
+        print(r"Please supply the path for the CLO blocks. ex. C:\Users\Public\Documents\CLO\Assets\Blocks\Man\Polos")
         hasSufficentArguments = False;
 
     outputPath = "";
     if len(sys.argv) > 2:
         outputPath = sys.argv[2]
     else:
-        print("Please supply the output path i.e. where do you want to resutling Python script to go. . Ex: C:\\\\Users\Public\Documents\CLO\CLOBot\Scripts\\")
+        print(r"Please supply where the files created should go. ex. C:\Users\Public\Documents\CLO\clobot")
         hasSufficentArguments = False;
 
     scriptFilePath = "";
     if len(sys.argv) > 3:
         scriptFilePath = sys.argv[3]
     else:
-        print(
-            "Please supply the output path i.e. where do you want to resutling Python script to go. . Ex: C:\\\\Users\Public\Documents\CLO\CLOBot\Scripts\\")
+        print(r"Please supply where resulting Python script should go. ex. C:\Users\Public\Documents\CLO\clobot\testcase.py")
         hasSufficentArguments = False;
 
     if not hasSufficentArguments:

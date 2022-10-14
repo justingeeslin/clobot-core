@@ -5,12 +5,12 @@ from pathlib import Path
 
 class CLOModularBlocks:
     
-    blockFilepath = "C:\\Users\\Public\\Documents\\CLO\\Assets\\Blocks\\Man\\Polos"
+    blockFilepath = r"C:\Users\Public\Documents\CLO\Assets\Blocks\Man\Polos"
     blockConfigFilePath = ""
-    exportFilepath = "C:\\Users\\Public\\Documents\\CLO\\clobot"
+    exportFilepath = r"C:\Users\Public\Documents\CLO\clobot"
 
     # The path and file name of the generated python script
-    scriptFilePath = "C:\\Users\\Public\\Documents\\CLO\\clobot\\test-case.py"
+    scriptFilePath = r"C:\Users\Public\Documents\CLO\clobot\testcase.py"
 
     garmentCreationScriptToOutput = """
         mdm = MarvelousDesignerModule()
@@ -87,7 +87,7 @@ class CLOModularBlocks:
                 ## Prepend the block path to the blocks
                 blockComboAndPath = []
                 for block in blockCombo:
-                    blockComboAndPath.append(CLOModularBlocks.blockFilepath + block)
+                    blockComboAndPath.append(CLOModularBlocks.blockFilepath + "\\" + block)
 
                 CLOModularBlocks.garmentCreationScriptToOutput += """
         # Load the garments
@@ -153,13 +153,13 @@ class CLOBot():
         object.set_simulation_options(0, 0, 10000)
 
         # Load the avatar
-        object.set_avatar_file_path("C:\\Users\\Public\\Documents\\CLO\\Assets\\Avatar\\Avatar\\Female_V2\\Avatar (Modular)\\Modular_FV2_Feifei.avt")
-        object.set_avatar_file_path("C:\\Users\\Public\\Documents\\CLO\\Assets\\Avatar\\Avatar\\Female_V1\\FV1_Emma.avt")
-        object.set_avatar_file_path("C:\\Users\\Public\\Documents\\CLO\\Assets\\Avatar\\Avatar\\Female_V2\\FV2_Feifei.avt")
+        object.set_avatar_file_path(r"C:\\Users\\Public\\Documents\\CLO\\Assets\\Avatar\\Avatar\\Female_V2\\Avatar (Modular)\\Modular_FV2_Feifei.avt")
+        object.set_avatar_file_path(r"C:\\Users\\Public\\Documents\\CLO\\Assets\\Avatar\\Avatar\\Female_V1\\FV1_Emma.avt")
+        object.set_avatar_file_path(r"C:\\Users\\Public\\Documents\\CLO\\Assets\\Avatar\\Avatar\\Female_V2\\FV2_Feifei.avt")
 
 """ + CLOModularBlocks.projectCreationScriptToOutput + """
 
-        object.set_save_folder_path('""" + CLOModularBlocks.exportFilepath + """', "obj")
+        object.set_save_folder_path(r'""" + CLOModularBlocks.exportFilepath + """', "obj")
 
         #set auto save option. True is save with Zprj File and Image File.
         object.set_auto_save(True)
@@ -176,7 +176,7 @@ class CLOBot():
             print("CLO Python Script created successfully!")
             print("From the CLO Python Script prompt, copy and paste the following, one line at a time:")
             # Add the CLOBot to the path
-            print("sys.path.append(\"" + os.path.dirname(CLOModularBlocks.scriptFilePath) + "\")")
+            print("sys.path.append(r\"" + os.path.dirname(CLOModularBlocks.scriptFilePath) + "\")")
             # Import CLOBot
             filename = Path(CLOModularBlocks.scriptFilePath).stem
             print("from " + filename + " import CLOBot")

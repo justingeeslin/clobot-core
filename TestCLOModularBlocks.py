@@ -24,7 +24,7 @@ class MyTestCase(TestCaseBase):
         exportFilePath = r"C:\Users\Public\Documents\CLO\clobot"
         CLOModularBlocks.discoverBlockInformation(blockFilePath, exportFilePath)
 
-        CLOModularBlocks.scriptFilePath = r"C:\Users\Public\Documents\CLO\clobot\test-case.py"
+        CLOModularBlocks.scriptFilePath = r"C:\Users\Public\Documents\CLO\clobot\testcase.py"
         CLOModularBlocks.writePythonScript()
 
         path = pl.Path(CLOModularBlocks.scriptFilePath)
