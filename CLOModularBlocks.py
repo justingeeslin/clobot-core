@@ -27,8 +27,6 @@ class CLOModularBlocks:
 
     @staticmethod
     def discoverBlockInformation(blockFilePath, exportFilePath):
-        renderImageFilename = ""
-
         CLOModularBlocks.blockFilepath = blockFilePath
         CLOModularBlocks.exportFilepath = exportFilePath
         ## Get block information from the config file, such as how many blocks are in each category.
@@ -75,7 +73,7 @@ class CLOModularBlocks:
             x = 3
             for blockCombo in blockCombos:
 
-                #renderImageFilename = '-'.join(CLOModularBlocks.folders)
+                renderImageFilename = ""
                 renderImageFilename = renderImageFilename.replace(CLOModularBlocks.blockFilepath, '')
                 renderImageFilename = renderImageFilename + '__' + '--'.join(blockCombo)
                 # Remove slashes
