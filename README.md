@@ -10,7 +10,7 @@ An automation robot for digital garment creation and simulation.
 ## Basics
 From the Command Prompt, run the following:
 ```bash
-clobot.exe C:\\Users\Public\Documents\CLO\Assets\Blocks\Man\Polos C:\\\\Users\Public\Documents\CLO C:\\Users\Public\Documents\CLO\CLOBot\clobot.py
+clobot.exe C:\\Users\Public\Documents\CLO\Assets\Blocks\Man\Polos C:\\Users\Public\Documents\CLO C:\\Users\Public\Documents\CLO\CLOBot\clobot.py
 ```
 
 Once this process completes, you will see further instructions in the command prompt window detailing how to run CLOBot within the CLO, at CLO’s Python prompt using CLO’s Python API. 
