@@ -1,90 +1,43 @@
-# This is a sample Python script.
-
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
-
-import pyautogui
-import time
-from ModularConfigurator import ModularConfigurator
-from Clo import Clo
-import beepy
-
-
-spacingBetweenModularConfiguratorFolders = 75
-
-pyautogui.FAILSAFE = True
-
-def exportToPNG():
-    # Export / Open the Export prompt
-    pyautogui.press('f10')
-    # Type into the save box some file name. This might become an argument to this function
-    pyautogui.write('garment')
-    clickOSSave()
-
-def deleteGarment():
-    # Focus the 3D garment window
-    pyautogui.click(1023, 198)
-    pyautogui.hotkey('command', 'a')
-    pyautogui.press('delete')
-    # to the Are you sure? prompt, click Yes
-    time.sleep(3)
-    pyautogui.click(767, 478)
-
-# Press the green button in the gutter to run the script.
-# TODO use grayscale matching and regions to make locateOnScreen() fast!
-# ex pyautogui.locateOnScreen('someButton.png', region=(0,0, 300, 400), grayscale=True)
+import sys
+from CLOModularBlocks import CLOModularBlocks
 
 if __name__ == '__main__':
-    Clo.pre()
-    try:
-        print(Clo.getWindowSize())
 
-        print('Please switch to CLO..')
-        for i in range(5).__reversed__():
-            print(i+1)
-            time.sleep(1)
-
-        # while Clo.isPrompting():
+    ## Establish whether in debug mode
+    isDebug = False
+    gettrace = getattr(sys, 'gettrace', None)
+    if gettrace():
+        isDebug = True
 
 
-        while Clo.isLoading():
-            # beepy.beep(sound="coin")
-            print("loading..")
+    blockPath = "";
+    ## Woman\\T-Shirts,Woman\\Trench Coats
+    hasSufficentArguments = True;
+    if len(sys.argv) > 1:
+        blockPath = sys.argv[1]
+    else:
+        print(r"Please supply the path for the CLO blocks. ex. C:\Users\Public\Documents\CLO\Assets\Blocks\Man\Polos")
+        hasSufficentArguments = False;
+
+    outputPath = "";
+    if len(sys.argv) > 2:
+        outputPath = sys.argv[2]
+    else:
+        print(r"Please supply where the files created should go. ex. C:\Users\Public\Documents\CLO\clobot")
+        hasSufficentArguments = False;
+
+    scriptFilePath = "";
+    if len(sys.argv) > 3:
+        scriptFilePath = sys.argv[3]
+    else:
+        print(r"Please supply where resulting Python script should go. ex. C:\Users\Public\Documents\CLO\clobot\testcase.py")
+        hasSufficentArguments = False;
+
+    if not hasSufficentArguments:
+        sys.exit(1)
 
 
-    except:
-        beepy.beep(sound="error")
+    CLOModularBlocks.discoverBlockInformation(blockPath, outputPath)
 
-    # Focus Clo window
-    pyautogui.click(x=17, y=81)
-
-    # pyautogui.moveTo(328, 727)
-    # pyautogui.scroll(-120)
-
-    # Click the scroll down button
-    pyautogui.click(x=492, y=748, clicks = 8)
-
-    # deleteGarment()
-    # pyautogui.screenshot('my_screenshot.png')
-    # Clo.snapshot3DWindow()
-
-    # ModularConfigurator.exportToPNG("test")
-    # ModularConfigurator.open()
-    # ModularConfigurator.tryOnAllMensBlocks()
-    # ModularConfigurator.iterateThroughGarmentBlocks()
-    # ModularConfigurator.getBlocksFromFilesystem()
-    # print(ModularConfigurator.blocks)
-    # Run through all blocks
-    #ModularConfigurator.iterateThroughBlockFolders(ModularConfigurator.blocks)
-    # Start in a particular folder - navigate to this folder manually in CLO before running
-    # ModularConfigurator.iterateThroughBlockFolders(ModularConfigurator.blocks['Man']['Shirts'])
-    # ModularConfigurator.exportToPNG()
-
-    # print(ModularConfigurator.parseFolderConfig("/Users/Skyward/Documents/clo/Assets/Blocks/Man/Jackets/Jackets.conf"))
-
-
-    # exportToPNG()
-
-    # blockFolders = ["Man", "Woman"]
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    CLOModularBlocks.scriptFilePath = scriptFilePath
+    CLOModularBlocks.writePythonScript()
