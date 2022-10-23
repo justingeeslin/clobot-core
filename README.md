@@ -22,3 +22,12 @@ The command line arguments are in this order:
 
 ## Roadmap
 * A UI on top of this command line tool.
+
+## Building for Windows
+This is how you build `clobot.exe` from this project written in Python. 
+
+**This step must be done on a Windows PC.**
+
+```commandline
+pyinstaller --onefile main.py -n clobot.exe
+```
