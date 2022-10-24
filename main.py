@@ -1,37 +1,43 @@
-# This is a sample Python script.
-
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
-
-import pyautogui
-from ModularConfigurator import ModularConfigurator
-
-spacingBetweenModularConfiguratorFolders = 75
-
-def exportToPNG():
-    # Export / Open the Export prompt
-    pyautogui.press('f10')
-    # Type into the save box some file name. This might become an argument to this function
-    pyautogui.write('garment')
-    clickOSSave()
-
-def clickOSSave():
-    # TODO Detect where the OS Save is
-    pyautogui.moveTo(1068, 529)
-    # Add a delay
-    # Click the Save button
-    pyautogui.click()
-
-# Press the green button in the gutter to run the script.
-# TODO use grayscale matching and regions to make locateOnScreen() fast!
-# ex pyautogui.locateOnScreen('someButton.png', region=(0,0, 300, 400), grayscale=True)
+import sys
+from CLOModularBlocks import CLOModularBlocks
 
 if __name__ == '__main__':
-    # Focus Clo window
-    pyautogui.click(x=17, y=81)
-    ModularConfigurator.open()
-    ModularConfigurator.tryOnAllMensBlocks()
 
-    # exportToPNG()
+    ## Establish whether in debug mode
+    isDebug = False
+    gettrace = getattr(sys, 'gettrace', None)
+    if gettrace():
+        isDebug = True
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+
+    blockPath = "";
+    ## Woman\\T-Shirts,Woman\\Trench Coats
+    hasSufficentArguments = True;
+    if len(sys.argv) > 1:
+        blockPath = sys.argv[1]
+    else:
+        print(r"Please supply the path for the CLO blocks. ex. C:\Users\Public\Documents\CLO\Assets\Blocks\Man\Polos")
+        hasSufficentArguments = False;
+
+    outputPath = "";
+    if len(sys.argv) > 2:
+        outputPath = sys.argv[2]
+    else:
+        print(r"Please supply where the files created should go. ex. C:\Users\Public\Documents\CLO\clobot")
+        hasSufficentArguments = False;
+
+    scriptFilePath = "";
+    if len(sys.argv) > 3:
+        scriptFilePath = sys.argv[3]
+    else:
+        print(r"Please supply where resulting Python script should go. ex. C:\Users\Public\Documents\CLO\clobot\testcase.py")
+        hasSufficentArguments = False;
+
+    if not hasSufficentArguments:
+        sys.exit(1)
+
+
+    CLOModularBlocks.discoverBlockInformation(blockPath, outputPath)
+
+    CLOModularBlocks.scriptFilePath = scriptFilePath
+    CLOModularBlocks.writePythonScript()
