@@ -5,9 +5,13 @@ from pathlib import Path
 import sys
 
 class CLOModularBlocks:
-    
+    # the path for the CLO blocks
     blockFilepath = r"C:\Users\Public\Documents\CLO\Assets\Blocks\Man\Polos"
+    # the path for the CLO avatars
+    avatarFilepath = r"C:\Users\Public\Documents\CLO\Assets\Avatar\Avatar\Female_V2"
+    # What's this again?
     blockConfigFilePath = ""
+    # where the files created should go
     exportFilepath = r"C:\Users\Public\Documents\CLO\clobot"
 
     # The path and file name of the generated python script
@@ -21,6 +25,10 @@ class CLOModularBlocks:
 
     ## A simulation script that can be run inside of CLO - Creates Projects and images from garments
     projectCreationScriptToOutput = """"""
+
+    ## When looping through avatars and garments, these are the lists:
+    listOfGarments = []
+    listOfAvatars = []
 
     def __init__(self):
         self.data = []
@@ -105,11 +113,7 @@ class CLOModularBlocks:
         mdm.ExportZPac(r'""" + CLOModularBlocks.exportFilepath + "\\" + renderImageFilename + """.zpac')
                            """
 
-                CLOModularBlocks.projectCreationScriptToOutput += """
-        #next multi process
-        object.set_garment_file_path(r'""" + CLOModularBlocks.exportFilepath + "\\" + renderImageFilename + """.zpac')
-        object.sync_file_lists("animation")
-                        """
+                CLOModularBlocks.listOfGarments.append(r"" + CLOModularBlocks.exportFilepath + "\\" + renderImageFilename + ".zpac")
 
     @staticmethod
     def writePythonScript():
@@ -156,20 +160,47 @@ class CLOBot():
 
         # Attempting to take the later frames of the simulation
         object.set_simulation_options(0, 0, 10000)
+        
+        garments = [
+            """ + ",".join(CLOModularBlocks.listOfGarments) + """
+        ]
 
-        # Load the avatar
-        object.set_avatar_file_path(r"C:\\Users\\Public\\Documents\\CLO\\Assets\\Avatar\\Avatar\\Female_V2\\Avatar (Modular)\\Modular_FV2_Feifei.avt")
-        object.set_avatar_file_path(r"C:\\Users\\Public\\Documents\\CLO\\Assets\\Avatar\\Avatar\\Female_V1\\FV1_Emma.avt")
-        object.set_avatar_file_path(r"C:\\Users\\Public\\Documents\\CLO\\Assets\\Avatar\\Avatar\\Female_V2\\FV2_Feifei.avt")
+        avatars = [
+            """ + ",".join(CLOModularBlocks.listOfAvatars) + """
+        ]
 
-""" + CLOModularBlocks.projectCreationScriptToOutput + """
+        for avatar in avatars:
+            for garment in garments:
+            
+                #initialize object module
+                object.initialize()
+    
+                #Set importing options (unit) of string type
+                object.set_import_scale_unit("mm")
+    
+                #Set exporting options (unit) of string type
+                object.set_export_scale_unit("mm")
+    
+                #Set simulation option.
+                # 1 Complete
+                # 0 Normal
+                # 2 Custom
+                simulation_quality = 0
+                object.set_simulation_options(0, simulation_quality, 10000) 
+    
+                # Load the avatar
+                object.set_avatar_file_path(r\"""" + CLOModularBlocks.avatarFilepath + """"\" + avatar)
+    
+                #next multi process
+                object.set_garment_file_path(r'""" + CLOModularBlocks.exportFilepath + """"\\" + garment)
+                object.sync_file_lists("animation")
 
-        object.set_save_folder_path(r'""" + CLOModularBlocks.exportFilepath + """', "obj")
-
-        #set auto save option. True is save with Zprj File and Image File.
-        object.set_auto_save(True)
-        #call the "process" function (to autosave project file, change factor to ture)
-        object.process()
+                object.set_save_folder_path(r'""" + CLOModularBlocks.exportFilepath + """', "obj")
+        
+                #set auto save option. True is save with Zprj File and Image File.
+                object.set_auto_save(True)
+                #call the "process" function (to autosave project file, change factor to ture)
+                object.process()
     """
 
         scriptToExport = imports + classScript

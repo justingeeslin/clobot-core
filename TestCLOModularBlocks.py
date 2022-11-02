@@ -21,6 +21,7 @@ class MyTestCase(TestCaseBase):
 
     def test_writePythonScript(self):
         blockFilePath = r"C:\Users\Public\Documents\CLO\Assets\Blocks\Man\Polos"
+        avatarFilepath = r"C:\Users\Public\Documents\CLO\Assets\Blocks\Man\Polos"
         exportFilePath = r"C:\Users\Public\Documents\CLO\clobot"
         CLOModularBlocks.discoverBlockInformation(blockFilePath, exportFilePath)
 
@@ -28,7 +29,10 @@ class MyTestCase(TestCaseBase):
         CLOModularBlocks.writePythonScript()
 
         path = pl.Path(CLOModularBlocks.scriptFilePath)
+        ## Test if the file is written
         self.assertIsFile(path)
+
+        ## Test if the file contains avatars
 
 
 if __name__ == '__main__':
