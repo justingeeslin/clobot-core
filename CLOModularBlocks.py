@@ -34,12 +34,27 @@ class CLOModularBlocks:
         self.data = []
 
     @staticmethod
-    def discoverBlockInformation(blockFilePath, exportFilePath):
+    def discoverBlockInformation(blockFilePath, avatarFilePath, exportFilePath):
         CLOModularBlocks.blockFilepath = blockFilePath
+        CLOModularBlocks.avatarFilePath = avatarFilePath
         CLOModularBlocks.exportFilepath = exportFilePath
         ## Get block information from the config file, such as how many blocks are in each category.
         import configparser
         config = configparser.ConfigParser()
+
+        ## Discover the avatars
+        files = os.listdir(CLOModularBlocks.avatarFilePath)
+        sortedFiles = sorted(files)
+        for file in sortedFiles:
+            # Show progress..
+            print('.')
+            filePath = os.path.join(CLOModularBlocks.avatarFilePath, file)
+            # If it is a file
+            if os.path.isfile(filePath):
+                ## Is it an avatar file (.avt)
+                if ".avt" in filePath:
+                    ## Add it to the list
+                    CLOModularBlocks.listOfAvatars.append(filePath)
 
         ## Discover the config file
         files = os.listdir(CLOModularBlocks.blockFilepath)
@@ -140,8 +155,6 @@ class CLOBot():
     def createProjectsAndImagesFromGarments(object):
         # Garments to Images & Projects
 
-        # clear console window
-        object.clear_console() 
         #initialize object module
         object.initialize()
 
@@ -162,45 +175,29 @@ class CLOBot():
         object.set_simulation_options(0, 0, 10000)
         
         garments = [
-            """ + ",".join(CLOModularBlocks.listOfGarments) + """
+            r\"""" + "\",\n r\"".join(CLOModularBlocks.listOfGarments) + """\"
         ]
 
         avatars = [
-            """ + ",".join(CLOModularBlocks.listOfAvatars) + """
+            r\"""" + "\",\n r\"".join(CLOModularBlocks.listOfAvatars) + """\"
         ]
 
         for avatar in avatars:
             for garment in garments:
-            
-                #initialize object module
-                object.initialize()
-    
-                #Set importing options (unit) of string type
-                object.set_import_scale_unit("mm")
-    
-                #Set exporting options (unit) of string type
-                object.set_export_scale_unit("mm")
-    
-                #Set simulation option.
-                # 1 Complete
-                # 0 Normal
-                # 2 Custom
-                simulation_quality = 0
-                object.set_simulation_options(0, simulation_quality, 10000) 
-    
                 # Load the avatar
-                object.set_avatar_file_path(r\"""" + CLOModularBlocks.avatarFilepath + """"\" + avatar)
+                object.set_avatar_file_path(avatar)
     
                 #next multi process
-                object.set_garment_file_path(r'""" + CLOModularBlocks.exportFilepath + """"\\" + garment)
+                object.set_garment_file_path(garment)
                 object.sync_file_lists("animation")
 
                 object.set_save_folder_path(r'""" + CLOModularBlocks.exportFilepath + """', "obj")
         
                 #set auto save option. True is save with Zprj File and Image File.
                 object.set_auto_save(True)
-                #call the "process" function (to autosave project file, change factor to ture)
-                object.process()
+
+        #call the "process" function (to autosave project file, change factor to ture)
+        object.process()
     """
 
         scriptToExport = imports + classScript

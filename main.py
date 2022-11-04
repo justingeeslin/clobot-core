@@ -19,9 +19,9 @@ if __name__ == '__main__':
         print(r"Please supply the path for the CLO blocks. ex. C:\Users\Public\Documents\CLO\Assets\Blocks\Man\Polos")
         hasSufficentArguments = False;
 
-    outputPath = "";
+    avatarPath = "";
     if len(sys.argv) > 2:
-        outputPath = sys.argv[2]
+        avatarPath = sys.argv[2]
     else:
         print(r"Please supply the path for the CLO avatars. ex. C:\Users\Public\Documents\CLO\Assets\Avatar\Avatar\Female_V2")
         hasSufficentArguments = False;
@@ -44,7 +44,7 @@ if __name__ == '__main__':
         sys.exit(1)
 
 
-    CLOModularBlocks.discoverBlockInformation(blockPath, outputPath)
+    CLOModularBlocks.discoverBlockInformation(blockPath, avatarPath, outputPath)
 
     CLOModularBlocks.scriptFilePath = scriptFilePath
     CLOModularBlocks.writePythonScript()
