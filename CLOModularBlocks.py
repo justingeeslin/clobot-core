@@ -5,9 +5,13 @@ from pathlib import Path
 import sys
 
 class CLOModularBlocks:
-    
+    # the path for the CLO blocks
     blockFilepath = r"C:\Users\Public\Documents\CLO\Assets\Blocks\Man\Polos"
+    # the path for the CLO avatars
+    avatarFilepath = r"C:\Users\Public\Documents\CLO\Assets\Avatar\Avatar\Female_V2"
+    # What's this again?
     blockConfigFilePath = ""
+    # where the files created should go
     exportFilepath = r"C:\Users\Public\Documents\CLO\clobot"
 
     # The path and file name of the generated python script
@@ -22,16 +26,35 @@ class CLOModularBlocks:
     ## A simulation script that can be run inside of CLO - Creates Projects and images from garments
     projectCreationScriptToOutput = """"""
 
+    ## When looping through avatars and garments, these are the lists:
+    listOfGarments = []
+    listOfAvatars = []
+
     def __init__(self):
         self.data = []
 
     @staticmethod
-    def discoverBlockInformation(blockFilePath, exportFilePath):
+    def discoverBlockInformation(blockFilePath, avatarFilePath, exportFilePath):
         CLOModularBlocks.blockFilepath = blockFilePath
+        CLOModularBlocks.avatarFilePath = avatarFilePath
         CLOModularBlocks.exportFilepath = exportFilePath
         ## Get block information from the config file, such as how many blocks are in each category.
         import configparser
         config = configparser.ConfigParser()
+
+        ## Discover the avatars
+        files = os.listdir(CLOModularBlocks.avatarFilePath)
+        sortedFiles = sorted(files)
+        for file in sortedFiles:
+            # Show progress..
+            print('.')
+            filePath = os.path.join(CLOModularBlocks.avatarFilePath, file)
+            # If it is a file
+            if os.path.isfile(filePath):
+                ## Is it an avatar file (.avt)
+                if ".avt" in filePath:
+                    ## Add it to the list
+                    CLOModularBlocks.listOfAvatars.append(filePath)
 
         ## Discover the config file
         files = os.listdir(CLOModularBlocks.blockFilepath)
@@ -105,11 +128,7 @@ class CLOModularBlocks:
         mdm.ExportZPac(r'""" + CLOModularBlocks.exportFilepath + "\\" + renderImageFilename + """.zpac')
                            """
 
-                CLOModularBlocks.projectCreationScriptToOutput += """
-        #next multi process
-        object.set_garment_file_path(r'""" + CLOModularBlocks.exportFilepath + "\\" + renderImageFilename + """.zpac')
-        object.sync_file_lists("animation")
-                        """
+                CLOModularBlocks.listOfGarments.append(r"" + CLOModularBlocks.exportFilepath + "\\" + renderImageFilename + ".zpac")
 
     @staticmethod
     def writePythonScript():
@@ -136,8 +155,6 @@ class CLOBot():
     def createProjectsAndImagesFromGarments(object):
         # Garments to Images & Projects
 
-        # clear console window
-        object.clear_console() 
         #initialize object module
         object.initialize()
 
@@ -156,18 +173,29 @@ class CLOBot():
 
         # Attempting to take the later frames of the simulation
         object.set_simulation_options(0, 0, 10000)
+        
+        garments = [
+            r\"""" + "\",\n r\"".join(CLOModularBlocks.listOfGarments) + """\"
+        ]
 
-        # Load the avatar
-        object.set_avatar_file_path(r"C:\\Users\\Public\\Documents\\CLO\\Assets\\Avatar\\Avatar\\Female_V2\\Avatar (Modular)\\Modular_FV2_Feifei.avt")
-        object.set_avatar_file_path(r"C:\\Users\\Public\\Documents\\CLO\\Assets\\Avatar\\Avatar\\Female_V1\\FV1_Emma.avt")
-        object.set_avatar_file_path(r"C:\\Users\\Public\\Documents\\CLO\\Assets\\Avatar\\Avatar\\Female_V2\\FV2_Feifei.avt")
+        avatars = [
+            r\"""" + "\",\n r\"".join(CLOModularBlocks.listOfAvatars) + """\"
+        ]
 
-""" + CLOModularBlocks.projectCreationScriptToOutput + """
+        for avatar in avatars:
+            for garment in garments:
+                # Load the avatar
+                object.set_avatar_file_path(avatar)
+    
+                #next multi process
+                object.set_garment_file_path(garment)
+                object.sync_file_lists("animation")
 
-        object.set_save_folder_path(r'""" + CLOModularBlocks.exportFilepath + """', "obj")
+                object.set_save_folder_path(r'""" + CLOModularBlocks.exportFilepath + """', "obj")
+        
+                #set auto save option. True is save with Zprj File and Image File.
+                object.set_auto_save(True)
 
-        #set auto save option. True is save with Zprj File and Image File.
-        object.set_auto_save(True)
         #call the "process" function (to autosave project file, change factor to ture)
         object.process()
     """

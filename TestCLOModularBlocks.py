@@ -20,15 +20,21 @@ class MyTestCase(TestCaseBase):
         self.assertIn(blockFilePath + r"\Polo.Dropped.zmdr", CLOModularBlocks.garmentCreationScriptToOutput)
 
     def test_writePythonScript(self):
-        blockFilePath = r"C:\Users\Public\Documents\CLO\Assets\Blocks\Man\Polos"
-        exportFilePath = r"C:\Users\Public\Documents\CLO\clobot"
-        CLOModularBlocks.discoverBlockInformation(blockFilePath, exportFilePath)
+        blockFilePath = r"C:\Users\Public\Documents\CLO\Assets\Blocks\Woman\Polos"
+        avatarFilepath = r"C:\Users\Public\Documents\CLO\Assets\Avatar\Avatar\Custom Set JG"
+        exportFilePath = r"C:\Users\Public\Documents\CLO"
+        CLOModularBlocks.discoverBlockInformation(blockFilePath, avatarFilepath, exportFilePath)
 
         CLOModularBlocks.scriptFilePath = r"C:\Users\Public\Documents\CLO\clobot\testcase.py"
         CLOModularBlocks.writePythonScript()
 
         path = pl.Path(CLOModularBlocks.scriptFilePath)
+        ## Test if the file is written
         self.assertIsFile(path)
+
+        ## Test if the file contains avatars
+        with open(CLOModularBlocks.scriptFilePath) as f:
+            self.assertEqual(True, 'Modular_FV2_Feifei.avt' in f.read())
 
 
 if __name__ == '__main__':
