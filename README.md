@@ -25,7 +25,7 @@ The command line arguments are in this order:
 * A UI on top of this command line tool.
 
 ## Building for Windows
-If you want to build the executable from source, this is how you build `clobot.exe` from this project written in Python. This is not necessary as you can simply download the executable, `clobot.exe` from  [the Releases tab](/releases/latest).
+If you want to build the executable from source, this is how you build `clobot.exe` from this project written in Python. This is not necessary as you can simply download the executable, `clobot.exe` from  [the Releases tab](https://github.com/justingeeslin/clobot/releases).
 
 **This step must be done on a Windows PC.**
 
